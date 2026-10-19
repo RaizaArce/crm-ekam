@@ -1,0 +1,38 @@
+/* Colores y tipografía de la web corporativa (ekamperu.com/css/style.css) */
+:root {
+    --azul-oscuro: #061D5A;
+    --azul: #1677B8;
+    --azul-hover: #0f5f94;
+    --azul-suave: #e8f4fd;
+    --naranja: #F78F05;
+    --fondo: #F6F9FC;
+    --superficie: #FFFFFF;
+    --texto: #152536;
+    --texto-suave: #64748B;
+    --texto-tenue: #94A3B8;
+    --borde: #E5EAF0;
+    --verde: #10B981;
+    --rojo: #DC2626;
+    --rojo-suave: #FEF2F2;
+    --ambar-suave: #FFFBEB;
+    --ambar-texto: #92400E;
+    --radio: 10px;
+    --sombra: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--texto);
+    background: var(--fondo);
+    -webkit-text-size-adjust: 100%;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--fondo); font-size: 15px; line-height: 1.45; }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 .5rem; }
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.15rem; }
+a { color: var(--azul); }
+.texto-suave { color: var(--texto-suave); margin: 0; }
+
+.centrado { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; }
+.tarjeta-login { width: 100%; max-width: 380px; text-align: center; }
+.tarjeta-login img { margin-bottom: 12px; }
