@@ -111,6 +111,20 @@ a { color: var(--azul); }
 .insignia { display: inline-block; font-size: .75rem; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap; background: var(--fondo); color: var(--texto-suave); border: 1px solid var(--borde); }
 .insignia-gris { background: #F1F5F9; color: var(--texto-tenue); }
 
+/* Formulario del interesado */
+.campo textarea {
+    width: 100%; font: inherit; color: inherit; background: #fff; min-height: 88px; resize: vertical;
+    border: 1px solid var(--borde); border-radius: 8px; padding: 10px 12px;
+}
+.campo textarea:focus { outline: 2px solid var(--azul); outline-offset: -1px; border-color: var(--azul); }
+.rejilla .ancho-completo { grid-column: 1 / -1; }
+.campo-casilla { display: flex; align-items: flex-start; gap: 10px; align-self: center; }
+.campo-casilla input { width: 20px; height: 20px; min-height: 0; margin: 1px 0 0; flex: none; accent-color: var(--azul); }
+.campo-casilla > span { font-size: .925rem; font-weight: 400; color: var(--texto); }
+.consentimiento { margin: 4px 0 16px; padding: 12px; background: var(--azul-suave); border-radius: 8px; }
+.alerta-aviso { background: var(--ambar-suave); color: var(--ambar-texto); border: 1px solid #FDE68A; }
+.lista-duplicados { margin: 6px 0; padding-left: 18px; }
+
 @media (max-width: 560px) {
     .usuario-nombre { display: none; }
     .datos > div { grid-template-columns: 1fr; gap: 0; }

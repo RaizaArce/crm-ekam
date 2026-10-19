@@ -5,6 +5,7 @@ import EnConstruccion from './componentes/EnConstruccion.jsx';
 import Login from './paginas/Login.jsx';
 import Cuenta from './paginas/Cuenta.jsx';
 import Usuarios from './paginas/Usuarios.jsx';
+import NuevoInteresado from './paginas/NuevoInteresado.jsx';
 
 // Si alguien escribe /usuarios sin ser administrador, vuelve a la lista de interesados.
 function SoloAdmin({ children }) {
@@ -23,7 +24,7 @@ export default function App() {
             <Route element={<Layout />}>
                 <Route index element={<Navigate to="/interesados" replace />} />
                 <Route path="interesados" element={<EnConstruccion titulo="Interesados" tarea="T30–T31, punto 7" />} />
-                <Route path="interesados/nuevo" element={<EnConstruccion titulo="Nuevo interesado" tarea="T25–T26, punto 5" />} />
+                <Route path="interesados/nuevo" element={<NuevoInteresado />} />
                 <Route path="usuarios" element={<SoloAdmin><Usuarios /></SoloAdmin>} />
                 <Route path="cuenta" element={<Cuenta />} />
                 <Route path="*" element={<Navigate to="/interesados" replace />} />
