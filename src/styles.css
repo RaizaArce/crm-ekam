@@ -89,6 +89,28 @@ a { color: var(--azul); }
 .datos dt { color: var(--texto-suave); font-size: .875rem; }
 .datos dd { margin: 0; overflow-wrap: anywhere; }
 
+.boton-peligro { color: var(--rojo); border-color: #FCA5A5; }
+.boton-peligro:hover { background: var(--rojo-suave); }
+
+/* Formularios en rejilla y listas */
+.campo select {
+    width: 100%; font: inherit; color: inherit; background: #fff;
+    border: 1px solid var(--borde); border-radius: 8px; padding: 10px 12px; min-height: 44px;
+}
+.campo select:focus { outline: 2px solid var(--azul); outline-offset: -1px; border-color: var(--azul); }
+.campo select:disabled { background: var(--fondo); color: var(--texto-suave); }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 12px; }
+.acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista > li { padding: 12px 0; border-top: 1px solid var(--borde); }
+.lista > li:first-child { border-top: 0; padding-top: 4px; }
+.lista > li.inactivo .lista-principal strong { color: var(--texto-tenue); }
+.lista-principal { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 2px; }
+.fila-edicion { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 12px; align-items: end; }
+.fila-edicion .acciones { margin: 0 0 12px; }
+.insignia { display: inline-block; font-size: .75rem; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap; background: var(--fondo); color: var(--texto-suave); border: 1px solid var(--borde); }
+.insignia-gris { background: #F1F5F9; color: var(--texto-tenue); }
+
 @media (max-width: 560px) {
     .usuario-nombre { display: none; }
     .datos > div { grid-template-columns: 1fr; gap: 0; }
