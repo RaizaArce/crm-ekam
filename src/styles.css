@@ -36,3 +36,31 @@ a { color: var(--azul); }
 .tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; }
 .tarjeta-login { width: 100%; max-width: 380px; text-align: center; }
 .tarjeta-login img { margin-bottom: 12px; }
+.tarjeta-login .boton-ancho { margin-top: 16px; }
+.texto-pequeno { font-size: .85rem; }
+
+/* Formularios */
+.campo { display: grid; gap: 4px; text-align: left; margin: 0 0 12px; }
+.campo > span { font-size: .85rem; font-weight: 600; color: var(--texto-suave); }
+.campo input {
+    width: 100%; font: inherit; color: inherit; background: #fff;
+    border: 1px solid var(--borde); border-radius: 8px; padding: 10px 12px; min-height: 44px;
+}
+.campo input:focus { outline: 2px solid var(--azul); outline-offset: -1px; border-color: var(--azul); }
+.tarjeta-login .campo:first-of-type { margin-top: 16px; }
+
+/* Botones */
+.boton {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    font: inherit; font-weight: 600; min-height: 44px; padding: 0 16px; border-radius: 8px;
+    border: 1px solid var(--borde); background: #fff; color: var(--texto); cursor: pointer; text-decoration: none;
+}
+.boton:hover { background: var(--fondo); }
+.boton:disabled { opacity: .6; cursor: default; }
+.boton-principal { background: var(--azul); border-color: var(--azul); color: #fff; }
+.boton-principal:hover { background: var(--azul-hover); }
+.boton-ancho { width: 100%; margin: 4px 0 12px; }
+
+/* Avisos */
+.alerta { border-radius: 8px; padding: 10px 12px; margin: 12px 0; text-align: left; font-size: .9rem; }
+.alerta-error { background: var(--rojo-suave); color: #991B1B; border: 1px solid #FECACA; }
