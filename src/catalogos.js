@@ -101,7 +101,7 @@ export function fechaRelativa(valor) {
 export function mensajeError(error) {
     const m = error?.message ?? '';
     if (m.includes('interesados_con_contacto')) return 'Ingresa al menos un teléfono o un correo.';
-    if (m.includes('ruc')) return 'El RUC debe tener 11 dígitos.';
+    if (m.includes('interesados_ruc_check')) return 'El RUC debe tener 11 dígitos.';
     if (m.includes('row-level security') || error?.code === '42501') return 'No tienes permiso para hacer esto.';
     if (m.includes('Failed to fetch')) return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
     return 'No se pudo guardar. Inténtalo de nuevo.';
