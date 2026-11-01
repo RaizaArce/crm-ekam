@@ -86,6 +86,17 @@ export function diasDesde(valor) {
     return Math.round((hoy - inicio) / 86400000);
 }
 
+// "Hoy, 4:30 p. m.", "Mañana, 9:00 a. m." o "lun. 19 oct." (prototipo 02).
+export function fechaRelativa(valor) {
+    const d = new Date(valor);
+    const dias = -diasDesde(valor);
+    const hora = d.toLocaleTimeString('es-PE', { hour: 'numeric', minute: '2-digit' });
+    if (dias === 0) return `Hoy, ${hora}`;
+    if (dias === 1) return `Mañana, ${hora}`;
+    if (dias === -1) return `Ayer, ${hora}`;
+    return d.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 // Errores de la base de datos en palabras de la consultora.
 export function mensajeError(error) {
     const m = error?.message ?? '';

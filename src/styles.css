@@ -281,6 +281,48 @@ a.boton-icono { text-decoration: none; }
 .menu-acciones button:hover { background: var(--rojo-suave); }
 .hoja .seccion-formulario .rejilla { grid-template-columns: minmax(0, 1fr); }
 
+/* Lista de interesados (prototipos 02 y D1) */
+.barra-filtros { padding: 12px 16px; background: var(--superficie); border-bottom: 1px solid var(--borde); }
+.buscador-lista {
+    display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; margin-bottom: 10px;
+    border: 1px solid var(--borde); border-radius: 10px; background: var(--fondo); color: var(--texto-suave);
+}
+.buscador-lista:focus-within { outline: 2px solid var(--azul); outline-offset: -1px; }
+.buscador-lista input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--texto); font: inherit; }
+.filtros-lista { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; }
+.filtros-lista::-webkit-scrollbar { display: none; }
+.contador-filtros { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 36px; padding: 0 12px; border: 1px solid var(--borde); border-radius: 999px; font-size: .85rem; font-weight: 600; }
+.filtro {
+    display: inline-flex; align-items: center; gap: 4px; flex: none; min-height: 36px; padding: 0 4px 0 12px;
+    border: 1px solid var(--borde); border-radius: 999px; background: var(--superficie); color: var(--texto-suave); font-size: .85rem;
+}
+/* Sin el estilo nativo: Opera dibuja un borde cuadrado dentro de la pastilla. */
+.filtro select, .orden-lista select { -webkit-appearance: none; appearance: none; border: 0; border-radius: 0; outline: 0; cursor: pointer; background-repeat: no-repeat; background-position: right 4px center; }
+.filtro select { max-width: 170px; min-height: 34px; padding: 0 24px 0 2px; background-color: transparent; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23152536' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); color: var(--texto); font: inherit; font-weight: 600; }
+.filtro-activo { border-color: var(--azul); background: var(--azul); color: rgba(255, 255, 255, .85); }
+.filtro-activo select { color: #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); }
+.filtro-activo select option { color: var(--texto); }
+.filtro:focus-within { outline: 2px solid var(--azul); outline-offset: 2px; }
+.limpiar-filtros { flex: none; white-space: nowrap; }
+.barra-resultados { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; margin-bottom: 8px; }
+.orden-lista select { padding: 4px 24px 4px 4px; background-color: transparent; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%231677B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); color: var(--azul); font: inherit; font-size: .875rem; font-weight: 600; }
+.orden-lista select:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+.sr-solo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.cuerpo-lista { padding-bottom: 96px; }
+.tarjetas-interesados { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.pagina .tarjeta-interesado { margin: 0; padding: 0; }
+.tarjeta-enlace { display: grid; gap: 10px; padding: 14px; color: inherit; text-decoration: none; }
+.tarjeta-enlace:hover strong { color: var(--azul); }
+.tarjeta-cabeza { display: flex; align-items: flex-start; gap: 12px; }
+.tarjeta-cabeza > div { display: grid; flex: 1; min-width: 0; gap: 1px; overflow-wrap: anywhere; }
+.tarjeta-datos, .tarjeta-pie { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--texto-suave); font-size: .8rem; }
+.tarjeta-datos span, .tarjeta-pie span { display: inline-flex; align-items: center; gap: 6px; }
+.tarjeta-pie { justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--borde); }
+.fecha-vencida { color: var(--rojo-texto); font-weight: 600; }
+.tabla-contenedor { display: none; }
+.paginacion { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.paginacion > div { display: flex; align-items: center; gap: 10px; }
+
 /* Etapas del embudo */
 .etapa { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 2px 9px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
 .etapa::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
@@ -346,6 +388,25 @@ a.boton-icono { text-decoration: none; }
     .app, .app-sin-pestanas { display: grid; grid-template-columns: 248px minmax(0, 1fr); }
     .botones-formulario { grid-template-columns: auto auto; justify-content: end; }
     .ficha { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .barra-filtros { padding: 14px 28px; }
+    .buscador-lista { margin-bottom: 10px; max-width: 520px; }
+    .filtros-lista { flex-wrap: wrap; margin: 0; padding: 0; overflow: visible; }
+    .cuerpo-lista { max-width: none; padding-bottom: 28px; }
+    .tarjetas-interesados { display: none; }
+    .pagina .tabla-contenedor { display: block; margin: 0; padding: 0; overflow: hidden; }
+    .tabla-interesados { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    .tabla-interesados th { padding: 12px 14px; color: var(--texto-suave); font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+    .tabla-interesados td { padding: 10px 14px; border-top: 1px solid var(--borde); vertical-align: middle; }
+    .tabla-interesados tbody tr { position: relative; }
+    .tabla-interesados tbody tr:hover { background: var(--fondo); }
+    .celda-nombre { display: flex; align-items: center; gap: 10px; min-width: 180px; }
+    .celda-nombre > div { display: grid; min-width: 0; }
+    .celda-nombre .iniciales { width: 34px; height: 34px; font-size: .75rem; }
+    .celda-nombre span.texto-suave { font-size: .775rem; }
+    .fila-enlace { color: var(--texto); font-weight: 600; text-decoration: none; }
+    .fila-enlace::after { content: ''; position: absolute; inset: 0; }
+    .fila-enlace:hover { color: var(--azul); }
+    .tabla-interesados tr:focus-within { outline: 2px solid var(--azul); outline-offset: -2px; }
     .botones-formulario .boton { min-width: 140px; }
     .principal { padding-bottom: 0; }
     .cabecera-pagina { padding: 18px 28px; }
