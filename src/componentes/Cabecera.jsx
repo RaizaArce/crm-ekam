@@ -1,7 +1,9 @@
 // Cabecera blanca de cada pantalla: título, subtítulo y acciones a la derecha.
-export default function Cabecera({ titulo, subtitulo, children }) {
+// "inicio" va antes del título, por ejemplo el botón de cerrar de un formulario.
+export default function Cabecera({ titulo, subtitulo, inicio, children }) {
     return (
         <header className="cabecera-pagina">
+            {inicio}
             <div className="cabecera-textos">
                 <h1>{titulo}</h1>
                 {subtitulo && <p>{subtitulo}</p>}

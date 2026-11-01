@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
-import { MEDIOS, VERSION_POLITICA, mensajeError, useCatalogos } from '../catalogos.js';
+import { VERSION_POLITICA, mensajeError, useCatalogos } from '../catalogos.js';
 import Cabecera from '../componentes/Cabecera.jsx';
 import CamposInteresado, { INTERESADO_VACIO, datosParaGuardar } from '../componentes/CamposInteresado.jsx';
 import AlertaDuplicados from '../componentes/AlertaDuplicados.jsx';
 
-// RF09: registro manual de quien llega por llamada, WhatsApp o recomendación.
+const ultimosDigitos = (telefono) => telefono.replace(/\D/g, '').slice(-9);
+
+// Prototipo 04 (RF09, RF13): registro manual de quien llega por llamada, WhatsApp o recomendación.
 export default function NuevoInteresado() {
     const { perfil } = useAuth();
     const catalogos = useCatalogos();
@@ -16,6 +20,7 @@ export default function NuevoInteresado() {
     const [consentimiento, setConsentimiento] = useState(false);
     const [duplicados, setDuplicados] = useState([]);
     const [revisado, setRevisado] = useState({ telefono: '', correo: '' });
+    const [registrarIgual, setRegistrarIgual] = useState(false);
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ tipo: '', texto: '' });
 
@@ -25,6 +30,7 @@ export default function NuevoInteresado() {
         const correo = valores.correo.trim();
         if (telefono === revisado.telefono && correo === revisado.correo) return duplicados;
         setRevisado({ telefono, correo });
+        setRegistrarIgual(false);
         if (!telefono && !correo) {
             setDuplicados([]);
             return [];
@@ -38,16 +44,17 @@ export default function NuevoInteresado() {
         e.preventDefault();
         setMensaje({ tipo: '', texto: '' });
         if (!valores.telefono.trim() && !valores.correo.trim()) {
-            return setMensaje({ tipo: 'error', texto: 'Ingresa al menos un teléfono o un correo.' });
+            return setMensaje({ tipo: 'error', texto: 'Registra al menos un teléfono o un correo.' });
         }
         if (!consentimiento) {
             return setMensaje({ tipo: 'error', texto: 'Confirma que el interesado aceptó el tratamiento de sus datos.' });
         }
 
-        // Si al guardar aparece un duplicado que no se había mostrado, primero se muestra.
-        const yaVistos = duplicados.length;
+        // Un duplicado se decide en su aviso, con "Registrar igual".
         const encontrados = await buscarDuplicados();
-        if (encontrados.length > yaVistos) return;
+        if (encontrados.length > 0 && !registrarIgual) {
+            return setMensaje({ tipo: 'error', texto: 'Revisa el posible duplicado antes de guardar.' });
+        }
 
         setGuardando(true);
         const { data, error } = await supabase
@@ -72,38 +79,61 @@ export default function NuevoInteresado() {
         setConsentimiento(false);
         setDuplicados([]);
         setRevisado({ telefono: '', correo: '' });
+        setRegistrarIgual(false);
         setMensaje(errorConsentimiento
             ? { tipo: 'error', texto: `Se registró a ${data.nombre}, pero no se guardó su consentimiento. Avísale al administrador.` }
             : { tipo: 'ok', texto: `${data.nombre} quedó registrado.` });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function aceptarDuplicado() {
+        setRegistrarIgual(true);
+        setMensaje({ tipo: '', texto: '' });
+    }
+
+    const digitos = ultimosDigitos(valores.telefono);
+    const coincideTelefono = digitos.length >= 7 && duplicados.some((d) => d.telefono_normalizado === digitos);
+    const duplicadoPor = duplicados.length === 0 ? null : coincideTelefono ? 'telefono' : 'correo';
+
     return (
         <section className="pagina">
-            <Cabecera titulo="Nuevo interesado" subtitulo="Registro manual" />
-            <div className="cuerpo">
+            <Cabecera titulo="Nuevo interesado" subtitulo="Registro manual"
+                inicio={(
+                    <Link className="boton-icono" to="/interesados" aria-label="Cerrar sin guardar">
+                        <X size={22} aria-hidden="true" />
+                    </Link>
+                )} />
+
+            <div className="cuerpo cuerpo-medio">
                 {mensaje.texto && <p className={`alerta alerta-${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
 
-                <form className="tarjeta" onSubmit={guardar}>
+                <form onSubmit={guardar}>
                     {!catalogos.listo ? <p className="texto-suave">Cargando…</p> : (
                         <CamposInteresado valores={valores} cambiar={setValores} catalogos={catalogos}
-                            alSalirContacto={buscarDuplicados} />
+                            alSalirContacto={buscarDuplicados} duplicadoPor={duplicadoPor}
+                            alerta={(
+                                <AlertaDuplicados duplicados={duplicados} usuarios={catalogos.usuarios} aceptado={registrarIgual}
+                                    dato={duplicadoPor === 'telefono' ? `el teléfono ${valores.telefono.trim()}` : `el correo ${valores.correo.trim()}`}
+                                    alRegistrarIgual={aceptarDuplicado} />
+                            )} />
                     )}
 
-                    <AlertaDuplicados duplicados={duplicados} usuarios={catalogos.usuarios} />
-
-                    <label className="campo campo-casilla consentimiento">
+                    <label className="campo-casilla consentimiento">
                         <input type="checkbox" checked={consentimiento} onChange={(e) => setConsentimiento(e.target.checked)} />
                         <span>
-                            El interesado aceptó por {MEDIOS[valores.medio_contacto].toLowerCase()} que EKAM guarde sus datos
-                            para contactarlo, según la{' '}
+                            El interesado aceptó el tratamiento de sus datos personales (Ley N.° 29733), según la{' '}
                             <a href="https://www.ekamperu.com/privacidad.html" target="_blank" rel="noreferrer">política de privacidad</a>. *
                         </span>
                     </label>
 
-                    <button className="boton boton-principal" disabled={guardando || !catalogos.listo}>
-                        {guardando ? 'Guardando…' : duplicados.length ? 'Registrar de todos modos' : 'Registrar interesado'}
-                    </button>
+                    <p className="texto-suave texto-pequeno nota-obligatorios">* Obligatorio. Registra al menos un teléfono o un correo.</p>
+
+                    <div className="botones-formulario">
+                        <Link className="boton" to="/interesados">Cancelar</Link>
+                        <button className="boton boton-principal" disabled={guardando || !catalogos.listo}>
+                            {guardando ? 'Guardando…' : 'Guardar'}
+                        </button>
+                    </div>
                 </form>
             </div>
         </section>

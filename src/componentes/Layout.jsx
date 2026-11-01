@@ -16,10 +16,12 @@ const SECCIONES = [
 export default function Layout() {
     const { perfil, esAdmin, salir } = useAuth();
     const { pathname } = useLocation();
+    // En celular, el formulario de registro ocupa toda la pantalla (prototipo 04).
+    const sinPestanas = pathname === '/interesados/nuevo';
     const enMas = ['/mas', '/usuarios', '/cuenta'].some((ruta) => pathname.startsWith(ruta));
 
     return (
-        <div className="app">
+        <div className={`app${sinPestanas ? ' app-sin-pestanas' : ''}`}>
             <aside className="barra-lateral">
                 <Link className="marca" to="/interesados">
                     <img src="/favicon.svg" alt="" width="36" height="36" />

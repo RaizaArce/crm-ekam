@@ -80,12 +80,16 @@ a { color: var(--azul); }
 .pestanas a:hover { color: var(--texto); }
 .pestanas a.active { color: var(--azul); font-weight: 600; }
 
+.app-sin-pestanas .pestanas { display: none; }
+.app-sin-pestanas .principal { padding-bottom: env(safe-area-inset-bottom); }
+
 /* Cabecera de cada pantalla */
 .cabecera-pagina {
     position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 14px 16px; background: var(--superficie); border-bottom: 1px solid var(--borde);
 }
-.cabecera-textos { min-width: 0; }
+.cabecera-pagina > .boton-icono { margin-left: -8px; }
+.cabecera-textos { min-width: 0; flex: 1; }
 .cabecera-pagina h1 { margin: 0; }
 .cabecera-pagina p { margin: 2px 0 0; color: var(--texto-suave); font-size: .85rem; }
 .cabecera-acciones { display: flex; align-items: center; gap: 12px; flex: none; }
@@ -130,6 +134,7 @@ a { color: var(--azul); }
     background: transparent; color: var(--texto); cursor: pointer;
 }
 .boton-icono:hover { background: var(--borde); }
+a.boton-icono { text-decoration: none; }
 .lista-usuarios { list-style: none; margin: 0; padding: 0; overflow: hidden; }
 .lista-usuarios > li { display: flex; align-items: center; gap: 10px; padding-right: 14px; border-top: 1px solid var(--borde); }
 .lista-usuarios > li:first-child { border-top: 0; }
@@ -201,7 +206,40 @@ a { color: var(--azul); }
 .campo-casilla { display: flex; align-items: flex-start; gap: 10px; align-self: center; }
 .campo-casilla input { width: 20px; height: 20px; min-height: 0; margin: 1px 0 0; flex: none; accent-color: var(--azul); }
 .campo-casilla > span { font-size: .925rem; font-weight: 400; color: var(--texto); }
-.consentimiento { margin: 4px 0 16px; padding: 12px; background: var(--azul-suave); border-radius: 8px; }
+.consentimiento { margin: 4px 0 8px; padding: 12px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 10px; }
+
+/* Registro de interesado (prototipo 04) */
+.seccion-formulario { margin: 0 0 8px; padding: 0; border: 0; min-width: 0; }
+.seccion-formulario .rejilla { grid-template-columns: minmax(0, 1fr); }
+.seccion-formulario legend {
+    padding: 0; margin-bottom: 10px; color: var(--texto-suave);
+    font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.campo-control { position: relative; display: block; }
+.campo-resaltado input { padding-right: 40px; background: #FEF3C7; border-color: var(--naranja); }
+.campo-control svg { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); color: var(--ambar-texto); }
+.alerta-duplicado { margin: 0 0 12px; padding: 14px; border: 1px solid var(--naranja); border-radius: 12px; background: #FEF3C7; }
+.alerta-duplicado-titulo { display: flex; gap: 10px; margin: 0 0 12px; font-size: .9rem; color: var(--texto); }
+.alerta-duplicado-titulo svg { flex: none; margin-top: 1px; color: var(--ambar-texto); }
+.alerta-duplicado-titulo strong { display: block; color: var(--ambar-texto); }
+.duplicado { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding: 12px; border-radius: 10px; background: var(--superficie); }
+.duplicado > div { display: grid; gap: 2px; min-width: 0; }
+.duplicado-empresa { color: var(--texto-suave); font-size: .825rem; overflow-wrap: anywhere; }
+.duplicado-marcas { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 2px; color: var(--texto-suave); font-size: .8rem; }
+.duplicado-acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.alerta-duplicado-nota { margin: 0; color: var(--ambar-texto); font-size: .85rem; font-weight: 600; }
+.nota-obligatorios { margin-bottom: 14px; }
+.botones-formulario { display: grid; grid-template-columns: 2fr 3fr; gap: 12px; margin-bottom: 8px; }
+
+/* Etapas del embudo */
+.etapa { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 2px 9px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+.etapa::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.etapa-nuevo { background: #F1F5F9; color: #475569; }
+.etapa-contactado { background: var(--azul-suave); color: #0B4F7C; }
+.etapa-demo_agendada { background: #F3E8FF; color: #6B21A8; }
+.etapa-cotizado { background: #FEF3C7; color: var(--ambar-texto); }
+.etapa-cerrado { background: #ECFDF5; color: #065F46; }
+.etapa-perdido { background: var(--rojo-suave); color: #991B1B; }
 
 /* Botones */
 .boton {
@@ -248,6 +286,7 @@ a { color: var(--azul); }
 
 /* El prototipo del inicio de sesión es solo para celular: en pantallas grandes, la hoja va centrada */
 @media (min-width: 640px) {
+    .seccion-formulario .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .hoja { width: 460px; margin: auto; border-radius: 16px; }
     .login { justify-content: center; padding: 32px 16px; }
     .login-marca { padding-top: 0; }
@@ -258,7 +297,9 @@ a { color: var(--azul); }
 @media (min-width: 1024px) {
     .solo-escritorio { display: inline-flex !important; }
     .solo-celular, .pestanas { display: none !important; }
-    .app { display: grid; grid-template-columns: 248px minmax(0, 1fr); }
+    .app, .app-sin-pestanas { display: grid; grid-template-columns: 248px minmax(0, 1fr); }
+    .botones-formulario { grid-template-columns: auto auto; justify-content: end; }
+    .botones-formulario .boton { min-width: 140px; }
     .principal { padding-bottom: 0; }
     .cabecera-pagina { padding: 18px 28px; }
     .cuerpo { padding: 24px 28px; }
