@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
+import Cabecera from '../componentes/Cabecera.jsx';
 import { NOMBRE_ROL } from '../componentes/Layout.jsx';
 
 const VACIO = { nombre: '', correo: '', rol: 'consultora', clave: '' };
@@ -98,93 +99,97 @@ export default function Usuarios() {
 
     return (
         <section className="pagina">
-            <h1>Usuarios</h1>
-            {mensaje.texto && <p className={`alerta alerta-${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
+            <Cabecera titulo="Usuarios" subtitulo="Cuentas con acceso al CRM">
+                <span className="etiqueta-admin">Admin</span>
+            </Cabecera>
+            <div className="cuerpo">
+                {mensaje.texto && <p className={`alerta alerta-${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
 
-            <form className="tarjeta" onSubmit={crear}>
-                <h2>Nuevo usuario</h2>
-                <div className="rejilla">
-                    <label className="campo">
-                        <span>Nombre</span>
-                        <input required maxLength={120} value={nuevo.nombre}
-                            onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
-                    </label>
-                    <label className="campo">
-                        <span>Correo</span>
-                        <input type="email" required autoComplete="off" value={nuevo.correo}
-                            onChange={(e) => setNuevo({ ...nuevo, correo: e.target.value })} />
-                    </label>
-                    <label className="campo">
-                        <span>Rol</span>
-                        <select value={nuevo.rol} onChange={(e) => setNuevo({ ...nuevo, rol: e.target.value })}>
-                            {Object.entries(NOMBRE_ROL).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
-                        </select>
-                    </label>
-                    <label className="campo">
-                        <span>Contraseña temporal (mínimo 8)</span>
-                        <input type="text" required minLength={8} autoComplete="off" value={nuevo.clave}
-                            onChange={(e) => setNuevo({ ...nuevo, clave: e.target.value })} />
-                    </label>
+                <form className="tarjeta" onSubmit={crear}>
+                    <h2>Nuevo usuario</h2>
+                    <div className="rejilla">
+                        <label className="campo">
+                            <span>Nombre</span>
+                            <input required maxLength={120} value={nuevo.nombre}
+                                onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
+                        </label>
+                        <label className="campo">
+                            <span>Correo</span>
+                            <input type="email" required autoComplete="off" value={nuevo.correo}
+                                onChange={(e) => setNuevo({ ...nuevo, correo: e.target.value })} />
+                        </label>
+                        <label className="campo">
+                            <span>Rol</span>
+                            <select value={nuevo.rol} onChange={(e) => setNuevo({ ...nuevo, rol: e.target.value })}>
+                                {Object.entries(NOMBRE_ROL).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+                            </select>
+                        </label>
+                        <label className="campo">
+                            <span>Contraseña temporal (mínimo 8)</span>
+                            <input type="text" required minLength={8} autoComplete="off" value={nuevo.clave}
+                                onChange={(e) => setNuevo({ ...nuevo, clave: e.target.value })} />
+                        </label>
+                    </div>
+                    <button className="boton boton-principal" disabled={creando}>
+                        {creando ? 'Creando…' : 'Crear usuario'}
+                    </button>
+                </form>
+
+                <div className="tarjeta">
+                    <h2>Usuarios del sistema</h2>
+                    {cargando ? <p className="texto-suave">Cargando…</p> : (
+                        <ul className="lista">
+                            {usuarios.map((u) => (
+                                <li key={u.id} className={u.activo ? '' : 'inactivo'}>
+                                    {editando?.id === u.id ? (
+                                        <form className="fila-edicion" onSubmit={guardarEdicion}>
+                                            <label className="campo">
+                                                <span>Nombre</span>
+                                                <input required maxLength={120} value={editando.nombre}
+                                                    onChange={(e) => setEditando({ ...editando, nombre: e.target.value })} />
+                                            </label>
+                                            <label className="campo">
+                                                <span>Rol{u.id === perfil.id ? ' (no puedes cambiar el tuyo)' : ''}</span>
+                                                <select value={editando.rol} disabled={u.id === perfil.id}
+                                                    onChange={(e) => setEditando({ ...editando, rol: e.target.value })}>
+                                                    {Object.entries(NOMBRE_ROL).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+                                                </select>
+                                            </label>
+                                            <div className="acciones">
+                                                <button className="boton boton-principal boton-chico" disabled={ocupado === u.id}>Guardar</button>
+                                                <button type="button" className="boton boton-chico" onClick={() => setEditando(null)}>Cancelar</button>
+                                            </div>
+                                        </form>
+                                    ) : (
+                                        <>
+                                            <div className="lista-principal">
+                                                <strong>{u.nombre}</strong>
+                                                <span className="insignia">{NOMBRE_ROL[u.rol]}</span>
+                                                {!u.activo && <span className="insignia insignia-gris">Desactivado</span>}
+                                                {u.id === perfil.id && <span className="insignia">Tú</span>}
+                                            </div>
+                                            <div className="texto-suave texto-pequeno">
+                                                {u.correo} · Último ingreso: {u.ultimo_ingreso ? fechaHora(u.ultimo_ingreso) : 'nunca'}
+                                            </div>
+                                            <div className="acciones">
+                                                <button className="boton boton-chico" disabled={ocupado === u.id}
+                                                    onClick={() => setEditando({ id: u.id, nombre: u.nombre, rol: u.rol })}>Editar</button>
+                                                <button className="boton boton-chico" disabled={ocupado === u.id}
+                                                    onClick={() => restablecerClave(u)}>Restablecer contraseña</button>
+                                                {u.id !== perfil.id && (
+                                                    <button className={`boton boton-chico ${u.activo ? 'boton-peligro' : ''}`}
+                                                        disabled={ocupado === u.id} onClick={() => cambiarEstado(u)}>
+                                                        {u.activo ? 'Desactivar' : 'Activar'}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
-                <button className="boton boton-principal" disabled={creando}>
-                    {creando ? 'Creando…' : 'Crear usuario'}
-                </button>
-            </form>
-
-            <div className="tarjeta">
-                <h2>Usuarios del sistema</h2>
-                {cargando ? <p className="texto-suave">Cargando…</p> : (
-                    <ul className="lista">
-                        {usuarios.map((u) => (
-                            <li key={u.id} className={u.activo ? '' : 'inactivo'}>
-                                {editando?.id === u.id ? (
-                                    <form className="fila-edicion" onSubmit={guardarEdicion}>
-                                        <label className="campo">
-                                            <span>Nombre</span>
-                                            <input required maxLength={120} value={editando.nombre}
-                                                onChange={(e) => setEditando({ ...editando, nombre: e.target.value })} />
-                                        </label>
-                                        <label className="campo">
-                                            <span>Rol{u.id === perfil.id ? ' (no puedes cambiar el tuyo)' : ''}</span>
-                                            <select value={editando.rol} disabled={u.id === perfil.id}
-                                                onChange={(e) => setEditando({ ...editando, rol: e.target.value })}>
-                                                {Object.entries(NOMBRE_ROL).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
-                                            </select>
-                                        </label>
-                                        <div className="acciones">
-                                            <button className="boton boton-principal boton-chico" disabled={ocupado === u.id}>Guardar</button>
-                                            <button type="button" className="boton boton-chico" onClick={() => setEditando(null)}>Cancelar</button>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <>
-                                        <div className="lista-principal">
-                                            <strong>{u.nombre}</strong>
-                                            <span className="insignia">{NOMBRE_ROL[u.rol]}</span>
-                                            {!u.activo && <span className="insignia insignia-gris">Desactivado</span>}
-                                            {u.id === perfil.id && <span className="insignia">Tú</span>}
-                                        </div>
-                                        <div className="texto-suave texto-pequeno">
-                                            {u.correo} · Último ingreso: {u.ultimo_ingreso ? fechaHora(u.ultimo_ingreso) : 'nunca'}
-                                        </div>
-                                        <div className="acciones">
-                                            <button className="boton boton-chico" disabled={ocupado === u.id}
-                                                onClick={() => setEditando({ id: u.id, nombre: u.nombre, rol: u.rol })}>Editar</button>
-                                            <button className="boton boton-chico" disabled={ocupado === u.id}
-                                                onClick={() => restablecerClave(u)}>Restablecer contraseña</button>
-                                            {u.id !== perfil.id && (
-                                                <button className={`boton boton-chico ${u.activo ? 'boton-peligro' : ''}`}
-                                                    disabled={ocupado === u.id} onClick={() => cambiarEstado(u)}>
-                                                    {u.activo ? 'Desactivar' : 'Activar'}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                )}
             </div>
         </section>
     );

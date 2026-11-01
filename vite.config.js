@@ -16,7 +16,7 @@ export default defineConfig({
                 start_url: '/',
                 display: 'standalone',
                 background_color: '#F6F9FC',
-                theme_color: '#061D5A',
+                theme_color: '#071A2B',
                 icons: [
                     { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
                     { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -27,6 +27,8 @@ export default defineConfig({
                 // Los datos siempre vienen de Supabase: solo se guarda en caché la aplicación.
                 navigateFallback: '/index.html',
                 globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+                // Español: basta con el alfabeto latino de las fuentes; el resto se descarga solo si hace falta.
+                globIgnores: ['**/*-{cyrillic,cyrillic-ext,greek,greek-ext,vietnamese,latin-ext,symbols}-*'],
             },
         }),
     ],

@@ -1,10 +1,16 @@
-// Pantallas del menú que se completan en los siguientes puntos del Sprint 02.
-export default function EnConstruccion({ titulo, tarea }) {
+import { Hourglass } from 'lucide-react';
+import Cabecera from './Cabecera.jsx';
+
+// Secciones del menú que todavía no existen: Embudo y Agenda (Sprint 03), Dashboard (Sprint 04).
+export default function EnConstruccion({ titulo, sprint }) {
     return (
         <section className="pagina">
-            <h1>{titulo}</h1>
-            <div className="tarjeta">
-                <p className="texto-suave">En construcción ({tarea}).</p>
+            <Cabecera titulo={titulo} />
+            <div className="cuerpo">
+                <div className="tarjeta aviso-pantalla">
+                    <Hourglass size={28} aria-hidden="true" />
+                    <p className="texto-suave">Disponible en el Sprint {sprint}.</p>
+                </div>
             </div>
         </section>
     );

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
 import { MEDIOS, VERSION_POLITICA, mensajeError, useCatalogos } from '../catalogos.js';
+import Cabecera from '../componentes/Cabecera.jsx';
 import CamposInteresado, { INTERESADO_VACIO, datosParaGuardar } from '../componentes/CamposInteresado.jsx';
 import AlertaDuplicados from '../componentes/AlertaDuplicados.jsx';
 
@@ -79,30 +80,32 @@ export default function NuevoInteresado() {
 
     return (
         <section className="pagina">
-            <h1>Nuevo interesado</h1>
-            {mensaje.texto && <p className={`alerta alerta-${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
+            <Cabecera titulo="Nuevo interesado" subtitulo="Registro manual" />
+            <div className="cuerpo">
+                {mensaje.texto && <p className={`alerta alerta-${mensaje.tipo}`} role="status">{mensaje.texto}</p>}
 
-            <form className="tarjeta" onSubmit={guardar}>
-                {!catalogos.listo ? <p className="texto-suave">Cargando…</p> : (
-                    <CamposInteresado valores={valores} cambiar={setValores} catalogos={catalogos}
-                        alSalirContacto={buscarDuplicados} />
-                )}
+                <form className="tarjeta" onSubmit={guardar}>
+                    {!catalogos.listo ? <p className="texto-suave">Cargando…</p> : (
+                        <CamposInteresado valores={valores} cambiar={setValores} catalogos={catalogos}
+                            alSalirContacto={buscarDuplicados} />
+                    )}
 
-                <AlertaDuplicados duplicados={duplicados} usuarios={catalogos.usuarios} />
+                    <AlertaDuplicados duplicados={duplicados} usuarios={catalogos.usuarios} />
 
-                <label className="campo campo-casilla consentimiento">
-                    <input type="checkbox" checked={consentimiento} onChange={(e) => setConsentimiento(e.target.checked)} />
-                    <span>
-                        El interesado aceptó por {MEDIOS[valores.medio_contacto].toLowerCase()} que EKAM guarde sus datos
-                        para contactarlo, según la{' '}
-                        <a href="https://www.ekamperu.com/privacidad.html" target="_blank" rel="noreferrer">política de privacidad</a>. *
-                    </span>
-                </label>
+                    <label className="campo campo-casilla consentimiento">
+                        <input type="checkbox" checked={consentimiento} onChange={(e) => setConsentimiento(e.target.checked)} />
+                        <span>
+                            El interesado aceptó por {MEDIOS[valores.medio_contacto].toLowerCase()} que EKAM guarde sus datos
+                            para contactarlo, según la{' '}
+                            <a href="https://www.ekamperu.com/privacidad.html" target="_blank" rel="noreferrer">política de privacidad</a>. *
+                        </span>
+                    </label>
 
-                <button className="boton boton-principal" disabled={guardando || !catalogos.listo}>
-                    {guardando ? 'Guardando…' : duplicados.length ? 'Registrar de todos modos' : 'Registrar interesado'}
-                </button>
-            </form>
+                    <button className="boton boton-principal" disabled={guardando || !catalogos.listo}>
+                        {guardando ? 'Guardando…' : duplicados.length ? 'Registrar de todos modos' : 'Registrar interesado'}
+                    </button>
+                </form>
+            </div>
         </section>
     );
 }
