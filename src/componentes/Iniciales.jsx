@@ -5,9 +5,9 @@ export function iniciales(nombre = '') {
     return letras.toUpperCase();
 }
 
-export default function Iniciales({ nombre, oscuro = false }) {
+export default function Iniciales({ nombre, oscuro = false, grande = false }) {
     return (
-        <span className={`iniciales${oscuro ? ' iniciales-oscuro' : ''}`} aria-hidden="true">
+        <span className={`iniciales${oscuro ? ' iniciales-oscuro' : ''}${grande ? ' iniciales-grande' : ''}`} aria-hidden="true">
             {iniciales(nombre)}
         </span>
     );

@@ -33,6 +33,14 @@ export const PLAZOS = {
     soporte: 'Soporte o mejora de una implementación actual',
 };
 
+export const TIPOS_INTERACCION = {
+    llamada: 'Llamada',
+    mensaje: 'Mensaje',
+    correo: 'Correo',
+    reunion: 'Reunión',
+    observacion: 'Observación',
+};
+
 // Misma versión que PRIVACY_POLICY_VERSION en js/main.js de la web.
 export const VERSION_POLITICA = '2026-10-16';
 
@@ -63,6 +71,19 @@ export function useCatalogos() {
 
 export function fecha(valor) {
     return valor ? new Date(valor).toLocaleDateString('es-PE', { dateStyle: 'medium' }) : '';
+}
+
+export function fechaHora(valor) {
+    return valor ? new Date(valor).toLocaleString('es-PE', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+}
+
+// Días completos transcurridos, contando por fecha y no por horas.
+export function diasDesde(valor) {
+    const inicio = new Date(valor);
+    inicio.setHours(0, 0, 0, 0);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    return Math.round((hoy - inicio) / 86400000);
 }
 
 // Errores de la base de datos en palabras de la consultora.

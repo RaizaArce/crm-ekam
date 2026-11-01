@@ -4,6 +4,7 @@ import Layout from './componentes/Layout.jsx';
 import EnConstruccion from './componentes/EnConstruccion.jsx';
 import Login from './paginas/Login.jsx';
 import Cuenta from './paginas/Cuenta.jsx';
+import Ficha from './paginas/Ficha.jsx';
 import Interesados from './paginas/Interesados.jsx';
 import Mas from './paginas/Mas.jsx';
 import NuevoInteresado from './paginas/NuevoInteresado.jsx';
@@ -27,6 +28,7 @@ export default function App() {
                 <Route index element={<Navigate to="/interesados" replace />} />
                 <Route path="interesados" element={<Interesados />} />
                 <Route path="interesados/nuevo" element={<NuevoInteresado />} />
+                <Route path="interesados/:id" element={<Ficha />} />
                 <Route path="embudo" element={<EnConstruccion titulo="Embudo de ventas" sprint="03" />} />
                 <Route path="agenda" element={<EnConstruccion titulo="Agenda de demostraciones" sprint="03" />} />
                 <Route path="dashboard" element={<EnConstruccion titulo="Dashboard comercial" sprint="04" />} />

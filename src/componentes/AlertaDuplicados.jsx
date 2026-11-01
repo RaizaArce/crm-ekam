@@ -1,9 +1,9 @@
+import { Link } from 'react-router-dom';
 import { TriangleAlert } from 'lucide-react';
 import Etapa from './Etapa.jsx';
 import Iniciales from './Iniciales.jsx';
 
 // RF13: aviso de interesados que ya tienen ese teléfono o correo (prototipo 04).
-// "Ver ficha" se activa cuando exista la ficha del interesado (T27).
 export default function AlertaDuplicados({ duplicados, dato, usuarios, aceptado, alRegistrarIgual }) {
     const nombreUsuario = (id) => usuarios.find((u) => u.id === id)?.nombre;
 
@@ -35,9 +35,7 @@ export default function AlertaDuplicados({ duplicados, dato, usuarios, aceptado,
                 <p className="alerta-duplicado-nota">Revisado: se registrará como un interesado nuevo.</p>
             ) : (
                 <div className="duplicado-acciones">
-                    <button type="button" className="boton" disabled title="Disponible cuando exista la ficha del interesado">
-                        Ver ficha
-                    </button>
+                    <Link className="boton" to={`/interesados/${duplicados[0].id}`}>Ver ficha</Link>
                     <button type="button" className="boton" onClick={alRegistrarIgual}>Registrar igual</button>
                 </div>
             )}

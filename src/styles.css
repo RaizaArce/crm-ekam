@@ -101,7 +101,7 @@ a { color: var(--azul); }
 .aviso-pantalla { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; text-align: center; color: var(--texto-tenue); }
 
 .datos { display: grid; gap: 10px; margin: 0; }
-.datos > div { display: grid; grid-template-columns: 120px 1fr; gap: 8px; }
+.datos > div { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 10px; }
 .datos dt { color: var(--texto-suave); font-size: .875rem; }
 .datos dd { margin: 0; overflow-wrap: anywhere; }
 
@@ -111,6 +111,7 @@ a { color: var(--azul); }
     background: var(--azul-suave); color: var(--azul); font-size: .85rem; font-weight: 700;
 }
 .iniciales-oscuro { background: var(--azul); color: #fff; }
+.iniciales-grande { width: 56px; height: 56px; font-size: 1.1rem; }
 .etiqueta-admin { display: inline-block; font-size: .7rem; font-weight: 700; border-radius: 6px; padding: 1px 7px; background: var(--naranja); color: var(--azul-oscuro); }
 .insignia { display: inline-block; font-size: .75rem; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap; background: var(--fondo); color: var(--texto-suave); border: 1px solid var(--borde); }
 .insignia-gris { background: #F1F5F9; color: var(--texto-tenue); }
@@ -231,6 +232,55 @@ a.boton-icono { text-decoration: none; }
 .nota-obligatorios { margin-bottom: 14px; }
 .botones-formulario { display: grid; grid-template-columns: 2fr 3fr; gap: 12px; margin-bottom: 8px; }
 
+/* Ficha del interesado (prototipo 03) */
+.ficha { display: grid; gap: 16px; align-items: start; }
+.ficha > div { min-width: 0; }
+.pagina .tarjeta .ficha-nombre { font-size: 1.15rem; margin: 0 0 2px; overflow-wrap: anywhere; }
+.ficha-etapa { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 12px 0; }
+.acciones-rapidas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.acciones-rapidas > * {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 60px; justify-content: center;
+    border-radius: 10px; background: var(--azul-suave); color: var(--azul); font-size: .78rem; font-weight: 600; text-decoration: none;
+}
+.acciones-rapidas a:hover { background: #d6ebfb; }
+.acciones-rapidas .inactiva { background: #F1F5F9; color: var(--texto-tenue); }
+.pagina .tarjeta h2 { margin-bottom: 12px; }
+.titulo-tarjeta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.pagina .tarjeta .titulo-tarjeta h2 { margin: 0; }
+.boton-suave {
+    display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 8px;
+    background: var(--azul-suave); color: var(--azul); font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer;
+}
+.boton-suave:hover { background: #d6ebfb; }
+.texto-largo { white-space: pre-wrap; overflow-wrap: anywhere; margin: 2px 0 0; }
+.historial-vacio { margin-bottom: 8px; }
+.linea-tiempo { list-style: none; margin: 8px 0 0; padding: 0; }
+.linea-tiempo > li { position: relative; padding: 0 0 18px 44px; }
+.linea-tiempo > li::before { content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: var(--borde); }
+.linea-tiempo > li:last-child { padding-bottom: 0; }
+.linea-tiempo > li:last-child::before { display: none; }
+.linea-icono {
+    position: absolute; z-index: 1; left: 0; top: 0; display: grid; place-items: center; width: 34px; height: 34px;
+    border-radius: 50%; background: var(--azul-suave); color: var(--azul);
+}
+.linea-cabeza { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 10px; }
+.linea-pie { color: var(--texto-suave); font-size: .775rem; }
+.linea-etapa { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.linea-etapa::after { content: ''; position: absolute; z-index: 1; left: 12px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--texto-tenue); }
+.chip-etapa { padding: 2px 8px; border-radius: 6px; background: #F1F5F9; color: var(--texto-suave); font-size: .775rem; font-weight: 500; }
+.enlace-tenue { color: var(--texto-suave); font-weight: 500; font-size: .775rem; }
+.enlace-tenue:hover { color: var(--rojo-texto); }
+.menu-acciones { position: relative; }
+.menu-acciones summary { list-style: none; }
+.menu-acciones summary::-webkit-details-marker { display: none; }
+.menu-acciones > div {
+    position: absolute; right: 0; top: 44px; z-index: 12; min-width: 190px; padding: 6px;
+    border: 1px solid var(--borde); border-radius: 10px; background: var(--superficie); box-shadow: 0 8px 24px rgba(7, 26, 43, .16);
+}
+.menu-acciones button { width: 100%; min-height: 40px; padding: 0 10px; border: 0; border-radius: 6px; background: none; color: var(--rojo-texto); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.menu-acciones button:hover { background: var(--rojo-suave); }
+.hoja .seccion-formulario .rejilla { grid-template-columns: minmax(0, 1fr); }
+
 /* Etapas del embudo */
 .etapa { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 2px 9px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
 .etapa::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
@@ -280,10 +330,6 @@ a.boton-icono { text-decoration: none; }
 .alerta-aviso { background: var(--ambar-suave); color: var(--ambar-texto); border: 1px solid #FDE68A; }
 .lista-duplicados { margin: 6px 0; padding-left: 18px; }
 
-@media (max-width: 560px) {
-    .datos > div { grid-template-columns: 1fr; gap: 0; }
-}
-
 /* El prototipo del inicio de sesión es solo para celular: en pantallas grandes, la hoja va centrada */
 @media (min-width: 640px) {
     .seccion-formulario .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -299,6 +345,7 @@ a.boton-icono { text-decoration: none; }
     .solo-celular, .pestanas { display: none !important; }
     .app, .app-sin-pestanas { display: grid; grid-template-columns: 248px minmax(0, 1fr); }
     .botones-formulario { grid-template-columns: auto auto; justify-content: end; }
+    .ficha { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .botones-formulario .boton { min-width: 140px; }
     .principal { padding-bottom: 0; }
     .cabecera-pagina { padding: 18px 28px; }

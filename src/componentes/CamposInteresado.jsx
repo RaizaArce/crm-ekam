@@ -27,6 +27,14 @@ export function datosParaGuardar(f) {
     };
 }
 
+// "2026-10-20T15:30:00+00:00" -> "2026-10-20T10:30" para <input type="datetime-local">
+export function aFechaLocal(valor) {
+    if (!valor) return '';
+    const d = new Date(valor);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 16);
+}
+
 function CampoContacto({ etiqueta, resaltado, ...props }) {
     return (
         <label className={`campo ancho-completo${resaltado ? ' campo-resaltado' : ''}`}>
@@ -47,6 +55,9 @@ export default function CamposInteresado({ valores, cambiar, catalogos, alSalirC
         onChange: (e) => cambiar({ ...valores, [nombre]: e.target.value }),
     });
     const consultoras = catalogos.usuarios.filter((u) => u.activo || u.id === valores.consultora_id);
+    // Quien llegó por la web conserva ese medio al editar su ficha.
+    const medioManual = MEDIOS_MANUALES.includes(valores.medio_contacto);
+    const medios = medioManual ? MEDIOS_MANUALES : [valores.medio_contacto];
 
     return (
         <>
@@ -105,8 +116,8 @@ export default function CamposInteresado({ valores, cambiar, catalogos, alSalirC
                     </label>
                     <label className="campo">
                         <span>Medio de contacto *</span>
-                        <select required {...campo('medio_contacto')}>
-                            {MEDIOS_MANUALES.map((m) => <option key={m} value={m}>{MEDIOS[m]}</option>)}
+                        <select required disabled={!medioManual} {...campo('medio_contacto')}>
+                            {medios.map((m) => <option key={m} value={m}>{MEDIOS[m]}</option>)}
                         </select>
                     </label>
                     <label className="campo">
@@ -114,6 +125,7 @@ export default function CamposInteresado({ valores, cambiar, catalogos, alSalirC
                         <select {...campo('plazo')}>
                             <option value="">Sin indicar</option>
                             {Object.entries(PLAZOS).map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+                            {valores.plazo && !PLAZOS[valores.plazo] && <option value={valores.plazo}>{valores.plazo}</option>}
                         </select>
                     </label>
                     <label className="campo">

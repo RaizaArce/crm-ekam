@@ -16,8 +16,8 @@ const SECCIONES = [
 export default function Layout() {
     const { perfil, esAdmin, salir } = useAuth();
     const { pathname } = useLocation();
-    // En celular, el formulario de registro ocupa toda la pantalla (prototipo 04).
-    const sinPestanas = pathname === '/interesados/nuevo';
+    // En celular, el registro y la ficha ocupan toda la pantalla (prototipos 03 y 04).
+    const sinPestanas = pathname.startsWith('/interesados/');
     const enMas = ['/mas', '/usuarios', '/cuenta'].some((ruta) => pathname.startsWith(ruta));
 
     return (

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
@@ -14,6 +14,7 @@ const ultimosDigitos = (telefono) => telefono.replace(/\D/g, '').slice(-9);
 export default function NuevoInteresado() {
     const { perfil } = useAuth();
     const catalogos = useCatalogos();
+    const navigate = useNavigate();
     // La consultora que registra queda como responsable; el administrador elige (RF10).
     const inicial = { ...INTERESADO_VACIO, consultora_id: perfil.rol === 'consultora' ? perfil.id : '' };
     const [valores, setValores] = useState(inicial);
@@ -75,15 +76,11 @@ export default function NuevoInteresado() {
         });
         setGuardando(false);
 
-        setValores(inicial);
-        setConsentimiento(false);
-        setDuplicados([]);
-        setRevisado({ telefono: '', correo: '' });
-        setRegistrarIgual(false);
-        setMensaje(errorConsentimiento
-            ? { tipo: 'error', texto: `Se registró a ${data.nombre}, pero no se guardó su consentimiento. Avísale al administrador.` }
-            : { tipo: 'ok', texto: `${data.nombre} quedó registrado.` });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        navigate(`/interesados/${data.id}`, {
+            state: errorConsentimiento
+                ? { tipo: 'error', aviso: 'Se registró el interesado, pero no se guardó su consentimiento. Regístralo en esta ficha.' }
+                : { tipo: 'ok', aviso: `${data.nombre} quedó registrado.` },
+        });
     }
 
     function aceptarDuplicado() {
