@@ -42,9 +42,26 @@ a { color: var(--azul); }
 
 .centrado { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
 .tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 20px; }
-.tarjeta-login { width: 100%; max-width: 380px; text-align: center; }
-.tarjeta-login img { margin-bottom: 12px; }
-.tarjeta-login .boton-ancho { margin-top: 16px; }
+
+/* Inicio de sesión (prototipo 01) */
+.login { min-height: 100vh; display: flex; flex-direction: column; background: var(--azul-oscuro); }
+.login-marca { display: flex; flex-direction: column; align-items: center; padding: 48px 24px 40px; color: #fff; text-align: center; }
+.login-marca img { border-radius: 16px; margin-bottom: 14px; }
+.login-marca strong { font-family: var(--fuente-titulos); font-size: 1.5rem; font-weight: 800; letter-spacing: .03em; }
+.login-marca p { margin: 6px 0 0; color: rgba(255, 255, 255, .78); font-size: .9rem; }
+.login-hoja { flex: 1; padding: 28px 24px 32px; background: var(--superficie); border-radius: 24px 24px 0 0; }
+.login-formulario { width: 100%; max-width: 400px; margin: 0 auto; }
+.login-formulario h1 { margin-bottom: 4px; }
+.login-ayuda { margin-bottom: 18px; }
+.login-opciones { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 2px 0 14px; }
+.login-opciones .campo-casilla { align-self: auto; cursor: pointer; }
+.enlace { padding: 6px 0; border: 0; background: none; color: var(--azul); font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer; }
+.enlace:hover { color: var(--azul-hover); text-decoration: underline; }
+.login-aviso {
+    display: flex; gap: 10px; margin: 8px 0 0; padding: 12px; border-radius: 10px;
+    background: var(--fondo); color: var(--texto-suave); font-size: .8rem;
+}
+.login-aviso svg { flex: none; color: var(--azul); }
 
 /* Estructura: barra inferior en celular, barra lateral en escritorio */
 .app { min-height: 100vh; }
@@ -117,7 +134,6 @@ a { color: var(--azul); }
 .campo textarea { min-height: 88px; resize: vertical; }
 .campo input:focus, .campo select:focus, .campo textarea:focus { outline: 2px solid var(--azul); outline-offset: -1px; border-color: var(--azul); }
 .campo select:disabled { background: var(--fondo); color: var(--texto-suave); }
-.tarjeta-login .campo:first-of-type { margin-top: 16px; }
 .rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 12px; }
 .rejilla .ancho-completo { grid-column: 1 / -1; }
 .campo-casilla { display: flex; align-items: flex-start; gap: 10px; align-self: center; }
@@ -166,6 +182,13 @@ a { color: var(--azul); }
 
 @media (max-width: 560px) {
     .datos > div { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* El prototipo del inicio de sesión es solo para celular: en pantallas grandes, la hoja va centrada */
+@media (min-width: 640px) {
+    .login { justify-content: center; padding: 32px 16px; }
+    .login-marca { padding-top: 0; }
+    .login-hoja { flex: none; width: 100%; max-width: 460px; margin: 0 auto; padding: 32px; border-radius: 20px; }
 }
 
 /* Escritorio: barra lateral azul oscuro (prototipo D1) */

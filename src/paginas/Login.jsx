@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { supabase } from '../supabase.js';
+import { ShieldCheck } from 'lucide-react';
+import { recordarSesion, supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
 
+// Prototipo 01: inicio de sesión (RF07).
 export default function Login() {
     const { aviso, setAviso } = useAuth();
     const [correo, setCorreo] = useState('');
     const [clave, setClave] = useState('');
+    const [recordar, setRecordar] = useState(true);
+    const [olvido, setOlvido] = useState(false);
     const [enviando, setEnviando] = useState(false);
     const [error, setError] = useState('');
 
@@ -14,6 +18,7 @@ export default function Login() {
         setError('');
         setAviso('');
         setEnviando(true);
+        recordarSesion(recordar);
         const { error } = await supabase.auth.signInWithPassword({ email: correo.trim(), password: clave });
         setEnviando(false);
         if (!error) return;
@@ -23,29 +28,57 @@ export default function Login() {
     }
 
     return (
-        <main className="centrado">
-            <form className="tarjeta tarjeta-login" onSubmit={entrar}>
-                <img src="/favicon.svg" alt="" width="56" height="56" />
-                <h1>CRM EKAM</h1>
-                <p className="texto-suave">Ingresa con el usuario que te dio el administrador.</p>
+        <main className="login">
+            <div className="login-marca">
+                <img src="/favicon.svg" alt="" width="72" height="72" />
+                <strong>EKAM PERÚ</strong>
+                <p>CRM de interesados · NAVASOFT ERP</p>
+            </div>
 
-                {(error || aviso) && <p className="alerta alerta-error" role="alert">{error || aviso}</p>}
+            <div className="login-hoja">
+                <form className="login-formulario" onSubmit={entrar}>
+                    <h1>Inicia sesión</h1>
+                    <p className="texto-suave login-ayuda">Ingresa con el correo que te asignó el administrador.</p>
 
-                <label className="campo">
-                    <span>Correo</span>
-                    <input type="email" autoComplete="username" required value={correo}
-                        onChange={(e) => setCorreo(e.target.value)} />
-                </label>
-                <label className="campo">
-                    <span>Contraseña</span>
-                    <input type="password" autoComplete="current-password" required value={clave}
-                        onChange={(e) => setClave(e.target.value)} />
-                </label>
-                <button className="boton boton-principal boton-ancho" disabled={enviando}>
-                    {enviando ? 'Ingresando…' : 'Ingresar'}
-                </button>
-                <p className="texto-suave texto-pequeno">¿Olvidaste tu contraseña? Pide al administrador que la restablezca.</p>
-            </form>
+                    {(error || aviso) && <p className="alerta alerta-error" role="alert">{error || aviso}</p>}
+
+                    <label className="campo">
+                        <span>Correo electrónico</span>
+                        <input type="email" autoComplete="username" required value={correo}
+                            onChange={(e) => setCorreo(e.target.value)} />
+                    </label>
+                    <label className="campo">
+                        <span>Contraseña</span>
+                        <input type="password" autoComplete="current-password" required value={clave}
+                            onChange={(e) => setClave(e.target.value)} />
+                    </label>
+
+                    <div className="login-opciones">
+                        <label className="campo-casilla">
+                            <input type="checkbox" checked={recordar} onChange={(e) => setRecordar(e.target.checked)} />
+                            <span>Recordarme</span>
+                        </label>
+                        <button type="button" className="enlace" aria-expanded={olvido} onClick={() => setOlvido(!olvido)}>
+                            ¿Olvidaste tu contraseña?
+                        </button>
+                    </div>
+
+                    {olvido && (
+                        <p className="alerta alerta-aviso" role="status">
+                            Pide al administrador del CRM que la restablezca desde la sección Usuarios.
+                        </p>
+                    )}
+
+                    <button className="boton boton-principal boton-ancho" disabled={enviando}>
+                        {enviando ? 'Ingresando…' : 'Ingresar'}
+                    </button>
+
+                    <p className="login-aviso">
+                        <ShieldCheck size={18} aria-hidden="true" />
+                        Acceso solo para personal autorizado de EKAM PERU S.A.C. Las cuentas las crea el administrador del CRM.
+                    </p>
+                </form>
+            </div>
         </main>
     );
 }
