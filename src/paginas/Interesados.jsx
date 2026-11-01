@@ -17,7 +17,7 @@ const ORDENES = {
 };
 
 // Sin comas, paréntesis ni comodines: rompen el filtro "or" de la consulta.
-const limpiarBusqueda = (texto) => texto.replace(/[,()%*\\"]/g, ' ').trim();
+export const limpiarBusqueda = (texto) => texto.replace(/[,()%*\\"]/g, ' ').trim();
 
 // Selector con forma de pastilla: "Etapa: En curso" (prototipos 02 y D1).
 function Filtro({ etiqueta, activo, valor, cambiar, children }) {

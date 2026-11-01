@@ -8,7 +8,7 @@ import Cabecera from '../componentes/Cabecera.jsx';
 import CamposInteresado, { INTERESADO_VACIO, datosParaGuardar } from '../componentes/CamposInteresado.jsx';
 import AlertaDuplicados from '../componentes/AlertaDuplicados.jsx';
 
-const ultimosDigitos = (telefono) => telefono.replace(/\D/g, '').slice(-9);
+export const ultimosDigitos = (telefono) => telefono.replace(/\D/g, '').slice(-9);
 
 // Prototipo 04 (RF09, RF13): registro manual de quien llega por llamada, WhatsApp o recomendación.
 export default function NuevoInteresado() {

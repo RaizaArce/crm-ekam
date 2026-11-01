@@ -24,12 +24,12 @@ function aFormulario(i) {
 }
 
 // WhatsApp necesita el código de país: los números peruanos se guardan a veces solo con 9 dígitos.
-function enlaceWhatsapp(telefono) {
+export function enlaceWhatsapp(telefono) {
     const digitos = telefono.replace(/\D/g, '');
     return `https://wa.me/${digitos.length === 9 ? `51${digitos}` : digitos}`;
 }
 
-function textoDias(desde) {
+export function textoDias(desde) {
     const dias = diasDesde(desde);
     if (dias === 0) return 'En esta etapa desde hoy';
     return `En esta etapa desde hace ${dias} ${dias === 1 ? 'día' : 'días'}`;
