@@ -480,7 +480,11 @@ a.boton-icono { text-decoration: none; }
 .tarjeta-embudo-enlace strong { font-size: .9rem; }
 .motivo-embudo { color: #991B1B; }
 .tarjeta-embudo-pie { display: flex; align-items: center; gap: 8px; padding: 0 4px 4px 12px; }
-.tarjeta-embudo-pie > :first-child { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tarjeta-embudo-pie > :first-child { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tarjeta-embudo-pie > :not(:first-child) { flex: none; }
+/* Las columnas del grid no deben crecer por el contenido: las tarjetas se ajustan a su columna. */
+.columna, .columna ul, .tarjeta-embudo { min-width: 0; }
+.tarjeta-embudo-enlace { overflow-wrap: anywhere; }
 .boton-mover { width: 36px; height: 36px; }
 @media (min-width: 1024px) {
     .chips-etapas { display: none; }
