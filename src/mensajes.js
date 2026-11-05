@@ -9,11 +9,24 @@ function sinPuntoFinal(texto) {
     return texto.trim().replace(/[.\s]+$/, '');
 }
 
+// "el viernes 6 de noviembre a las 10:00 a. m."
+export function cuandoDemo(inicio) {
+    const d = new Date(inicio);
+    const dia = d.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).toLowerCase().replace(',', '');
+    const hora = d.toLocaleTimeString('es-PE', { hour: 'numeric', minute: '2-digit' });
+    // Los navegadores usan espacios especiales en "a. m.": en un mensaje van espacios normales.
+    return `el ${dia} a las ${hora}`.replace(/\s/g, ' ');
+}
+
 // Texto central según la etapa del embudo.
-function cuerpoPorEtapa(etapa, solucion, necesidad) {
+function cuerpoPorEtapa(etapa, solucion, necesidad, demo) {
     const producto = solucion || 'nuestras soluciones';
     switch (etapa) {
         case 'demo_agendada':
+            if (demo) {
+                return [`Le escribo para confirmar la demostración de ${producto}, ${cuandoDemo(demo.inicio)} (${demo.modalidad}).`,
+                    '¿Sigue en pie? Si necesita moverla, avíseme y buscamos otro espacio.'];
+            }
             return [`Le escribo para confirmar la demostración de ${producto} que tenemos programada.`,
                 '¿Sigue en pie la fecha y hora acordadas? Si necesita moverla, avíseme y buscamos otro espacio.'];
         case 'cotizado':
@@ -33,11 +46,12 @@ function cuerpoPorEtapa(etapa, solucion, necesidad) {
     }
 }
 
-export function mensajesInteresado(interesado, { solucion = '', consultora = '' } = {}) {
+// demo: la próxima demostración programada ({ inicio, modalidad }), si hay.
+export function mensajesInteresado(interesado, { solucion = '', consultora = '', demo = null } = {}) {
     const nombre = primerNombre(interesado.nombre);
     const saludo = nombre ? `Hola, ${nombre}:` : 'Hola:';
     const presentacion = consultora ? `Le saluda ${consultora}, de EKAM PERÚ.` : 'Le saludamos de EKAM PERÚ.';
-    const parrafos = cuerpoPorEtapa(interesado.etapa, solucion, interesado.necesidad?.trim());
+    const parrafos = cuerpoPorEtapa(interesado.etapa, solucion, interesado.necesidad?.trim(), demo);
 
     const asunto = [solucion || 'NAVASOFT', interesado.empresa ? `para ${interesado.empresa}` : '']
         .filter(Boolean).join(' ') + ' – EKAM PERÚ';

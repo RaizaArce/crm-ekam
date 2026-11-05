@@ -149,7 +149,10 @@ export default function Ficha() {
     }
 
     const i = interesado;
-    const mensajes = mensajesInteresado(i, { solucion: nombreDe(catalogos.soluciones, i.solucion), consultora: perfil?.nombre });
+    // La próxima demostración programada, para citar su fecha en el mensaje.
+    const proximaDemo = demos.filter((d) => d.estado === 'programada' && new Date(d.inicio) > new Date())
+        .sort((a, b) => new Date(a.inicio) - new Date(b.inicio))[0] ?? null;
+    const mensajes = mensajesInteresado(i, { solucion: nombreDe(catalogos.soluciones, i.solucion), consultora: perfil?.nombre, demo: proximaDemo });
 
     return (
         <section className="pagina">

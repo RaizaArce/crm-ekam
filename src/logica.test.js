@@ -287,3 +287,15 @@ describe('UT16 semana de la agenda (HU18)', () => {
         expect(tituloSemana(new Date('2026-10-26T00:00'))).toBe('Semana del 26 de octubre al 1 de noviembre');
     });
 });
+
+describe('UT17 fecha de la demostración en el mensaje (HU09, HU18)', () => {
+    const base = { nombre: 'Carlos Mendoza', etapa: 'demo_agendada' };
+    it('cita el día, la hora y la modalidad de la próxima demostración', () => {
+        const m = mensajesInteresado(base, { solucion: 'NAVASOFT ERP', demo: { inicio: '2026-11-06T10:00', modalidad: 'virtual' } });
+        expect(m.correo).toContain('NAVASOFT ERP, el viernes 6 de noviembre a las 10:00 a. m. (virtual).');
+        expect(m.whatsapp).toContain('el viernes 6 de noviembre');
+    });
+    it('sin demostración programada usa el texto general', () => {
+        expect(mensajesInteresado(base).correo).toContain('que tenemos programada');
+    });
+});
