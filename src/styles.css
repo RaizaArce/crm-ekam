@@ -485,7 +485,10 @@ a.boton-icono { text-decoration: none; }
 /* Las columnas del grid no deben crecer por el contenido: las tarjetas se ajustan a su columna. */
 .columna, .columna ul, .tarjeta-embudo { min-width: 0; }
 .tarjeta-embudo-enlace { overflow-wrap: anywhere; }
-.boton-mover { width: 36px; height: 36px; }
+.boton-mover { width: 32px; height: 32px; }
+.tarjeta-embudo-pie { gap: 6px; }
+.tarjeta-embudo-pie .dato-icono { min-width: 0; }
+.recorte { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (min-width: 1024px) {
     .chips-etapas { display: none; }
     .tablero { grid-auto-columns: minmax(190px, 1fr); gap: 10px; scroll-snap-type: none; }

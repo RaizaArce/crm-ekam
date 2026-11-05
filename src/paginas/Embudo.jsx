@@ -153,7 +153,7 @@ export default function Embudo() {
                                         </Link>
                                         <div className="tarjeta-embudo-pie">
                                             {i.consultora_id
-                                                ? <span className="dato-icono texto-pequeno"><Iniciales nombre={usuario(i.consultora_id)} />{usuario(i.consultora_id)}</span>
+                                                ? <span className="dato-icono texto-pequeno" title={usuario(i.consultora_id)}><Iniciales nombre={usuario(i.consultora_id)} /><span className="recorte">{usuario(i.consultora_id)}</span></span>
                                                 : <span className="texto-tenue texto-pequeno">Sin asignar</span>}
                                             <span className="dato-icono texto-tenue texto-pequeno" title="Tiempo en esta etapa">
                                                 <Clock size={13} aria-hidden="true" />{textoDiasCorto(i.etapa_desde)}
