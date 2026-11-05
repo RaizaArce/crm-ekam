@@ -6,6 +6,7 @@ import { iniciales } from './componentes/Iniciales.jsx';
 import { enlaceWhatsapp, textoDias } from './paginas/Ficha.jsx';
 import { limpiarBusqueda } from './paginas/Interesados.jsx';
 import { ultimosDigitos } from './paginas/NuevoInteresado.jsx';
+import { enlaceCorreo, mensajesInteresado } from './mensajes.js';
 
 vi.mock('./supabase.js', () => ({ supabase: {} }));
 
@@ -187,5 +188,31 @@ describe('UT12 datosCambioEtapa (HU16)', () => {
     });
     it('rechaza una etapa que no existe', () => {
         expect(datosCambioEtapa('ganado', '').error).toBeTruthy();
+    });
+});
+
+describe('UT13 mensajesInteresado (HU09)', () => {
+    const base = { nombre: 'María Fernández', empresa: 'Agroexport S.A.C.', etapa: 'nuevo', necesidad: 'Integrar ventas e inventario.' };
+    it('arma el correo con nombre, solución, necesidad y firma', () => {
+        const m = mensajesInteresado(base, { solucion: 'NAVASOFT ERP', consultora: 'Lucía Paredes' });
+        expect(m.asunto).toBe('NAVASOFT ERP para Agroexport S.A.C. – EKAM PERÚ');
+        expect(m.correo).toMatch(/^Hola, María:/);
+        expect(m.correo).toContain('"Integrar ventas e inventario"');
+        expect(m.correo).toMatch(/Lucía Paredes\nEKAM PERÚ/);
+    });
+    it('omite la necesidad y la empresa cuando faltan', () => {
+        const m = mensajesInteresado({ nombre: 'Luis', etapa: 'nuevo' });
+        expect(m.asunto).toBe('NAVASOFT – EKAM PERÚ');
+        expect(m.correo).not.toContain('Nos comentó');
+        expect(m.whatsapp).toMatch(/^Hola, Luis, le saludamos de EKAM PERÚ\./);
+    });
+    it('cambia el texto según la etapa', () => {
+        expect(mensajesInteresado({ ...base, etapa: 'cotizado' }).correo).toContain('cotización');
+        expect(mensajesInteresado({ ...base, etapa: 'demo_agendada' }).whatsapp).toContain('confirmar la demostración');
+    });
+    it('codifica los enlaces de correo y WhatsApp', () => {
+        const m = mensajesInteresado(base);
+        expect(enlaceCorreo('a@b.pe', m)).toMatch(/^mailto:a@b\.pe\?subject=.+&body=Hola%2C%20Mar%C3%ADa/);
+        expect(enlaceWhatsapp('943 163 301', 'Hola, ¿qué tal?')).toBe('https://wa.me/51943163301?text=Hola%2C%20%C2%BFqu%C3%A9%20tal%3F');
     });
 });

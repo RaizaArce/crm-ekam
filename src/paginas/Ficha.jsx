@@ -12,6 +12,7 @@ import Etapa from '../componentes/Etapa.jsx';
 import Historial from '../componentes/Historial.jsx';
 import Hoja from '../componentes/Hoja.jsx';
 import Iniciales from '../componentes/Iniciales.jsx';
+import { enlaceCorreo, mensajesInteresado } from '../mensajes.js';
 
 function aFormulario(i) {
     return {
@@ -24,9 +25,10 @@ function aFormulario(i) {
 }
 
 // WhatsApp necesita el código de país: los números peruanos se guardan a veces solo con 9 dígitos.
-export function enlaceWhatsapp(telefono) {
+export function enlaceWhatsapp(telefono, texto = '') {
     const digitos = telefono.replace(/\D/g, '');
-    return `https://wa.me/${digitos.length === 9 ? `51${digitos}` : digitos}`;
+    const base = `https://wa.me/${digitos.length === 9 ? `51${digitos}` : digitos}`;
+    return texto ? `${base}?text=${encodeURIComponent(texto)}` : base;
 }
 
 export function textoDias(desde) {
@@ -42,7 +44,7 @@ function Dato({ etiqueta, children }) {
 // Prototipo 03 (RF10, RF11): ficha con los datos del interesado y su historial.
 export default function Ficha() {
     const { id } = useParams();
-    const { esAdmin } = useAuth();
+    const { esAdmin, perfil } = useAuth();
     const catalogos = useCatalogos();
     const navigate = useNavigate();
     const location = useLocation();
@@ -152,6 +154,7 @@ export default function Ficha() {
     }
 
     const i = interesado;
+    const mensajes = mensajesInteresado(i, { solucion: nombreDe(catalogos.soluciones, i.solucion), consultora: perfil?.nombre });
 
     return (
         <section className="pagina">
@@ -190,10 +193,10 @@ export default function Ficha() {
                                     ? <a href={`tel:${i.telefono.replace(/[^\d+]/g, '')}`}><Phone size={20} aria-hidden="true" />Llamar</a>
                                     : <span className="inactiva"><Phone size={20} aria-hidden="true" />Llamar</span>}
                                 {i.telefono
-                                    ? <a href={enlaceWhatsapp(i.telefono)} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" />WhatsApp</a>
+                                    ? <a href={enlaceWhatsapp(i.telefono, mensajes.whatsapp)} target="_blank" rel="noreferrer"><MessageCircle size={20} aria-hidden="true" />WhatsApp</a>
                                     : <span className="inactiva"><MessageCircle size={20} aria-hidden="true" />WhatsApp</span>}
                                 {i.correo
-                                    ? <a href={`mailto:${i.correo}`}><Mail size={20} aria-hidden="true" />Correo</a>
+                                    ? <a href={enlaceCorreo(i.correo, mensajes)}><Mail size={20} aria-hidden="true" />Correo</a>
                                     : <span className="inactiva"><Mail size={20} aria-hidden="true" />Correo</span>}
                                 <span className="inactiva" title="Disponible en el Sprint 03"><Calendar size={20} aria-hidden="true" />Agendar</span>
                             </div>
