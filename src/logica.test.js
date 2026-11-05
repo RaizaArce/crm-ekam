@@ -7,6 +7,7 @@ import { enlaceWhatsapp, textoDias } from './paginas/Ficha.jsx';
 import { limpiarBusqueda } from './paginas/Interesados.jsx';
 import { ultimosDigitos } from './paginas/NuevoInteresado.jsx';
 import { enlaceCorreo, mensajesInteresado } from './mensajes.js';
+import { agruparPorEtapa } from './paginas/Embudo.jsx';
 
 vi.mock('./supabase.js', () => ({ supabase: {} }));
 
@@ -214,5 +215,23 @@ describe('UT13 mensajesInteresado (HU09)', () => {
         const m = mensajesInteresado(base);
         expect(enlaceCorreo('a@b.pe', m)).toMatch(/^mailto:a@b\.pe\?subject=.+&body=Hola%2C%20Mar%C3%ADa/);
         expect(enlaceWhatsapp('943 163 301', 'Hola, ¿qué tal?')).toBe('https://wa.me/51943163301?text=Hola%2C%20%C2%BFqu%C3%A9%20tal%3F');
+    });
+});
+
+describe('UT14 agruparPorEtapa (HU17)', () => {
+    it('crea una columna por etapa en el orden del embudo, aunque esté vacía', () => {
+        const g = agruparPorEtapa([]);
+        expect(Object.keys(g)).toEqual(Object.keys(ETAPAS));
+        expect(g.nuevo).toEqual([]);
+    });
+    it('reparte cada interesado en su etapa y respeta el orden recibido', () => {
+        const g = agruparPorEtapa([
+            { id: 1, etapa: 'nuevo' }, { id: 2, etapa: 'cotizado' }, { id: 3, etapa: 'nuevo' },
+        ]);
+        expect(g.nuevo.map((x) => x.id)).toEqual([1, 3]);
+        expect(g.cotizado.map((x) => x.id)).toEqual([2]);
+    });
+    it('ignora una etapa desconocida sin romper el tablero', () => {
+        expect(() => agruparPorEtapa([{ id: 9, etapa: 'otra' }])).not.toThrow();
     });
 });

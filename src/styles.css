@@ -448,3 +448,40 @@ a.boton-icono { text-decoration: none; }
     .tarjeta-usuario button:hover { background: rgba(255, 255, 255, .1); color: #fff; }
     .barra-lateral :focus-visible { outline-color: #fff; }
 }
+
+/* ---- Embudo de ventas (prototipos 05 y D2) ---- */
+.dato-icono { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+.dato-icono .iniciales { width: 22px; height: 22px; font-size: .6rem; }
+.barra-embudo { padding: 10px 16px 0; }
+.chips-etapas { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 10px 16px 4px; }
+.chips-etapas::-webkit-scrollbar { display: none; }
+.chips-etapas .etapa { border: 0; min-height: 30px; padding: 0 12px; font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.alerta-embudo { margin: 8px 16px 0; }
+.tablero {
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(82vw, 300px); gap: 12px;
+    overflow-x: auto; scroll-snap-type: x mandatory; padding: 12px 16px 24px; align-items: start;
+}
+.columna {
+    scroll-snap-align: start; background: #EEF3F8; border-radius: 12px; padding: 10px;
+    border: 2px dashed transparent; transition: border-color .15s, background .15s;
+}
+.columna-sobre { border-color: var(--azul); background: #E3EFFA; }
+.columna-cabecera { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.columna-nota { margin: -4px 0 8px; }
+.columna ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.columna-vacia { text-align: center; padding: 16px 0; }
+.tarjeta-embudo {
+    background: #fff; border-radius: 10px; box-shadow: 0 1px 2px rgba(15, 23, 42, .08), 0 0 0 1px rgba(15, 23, 42, .05);
+    cursor: grab;
+}
+.tarjeta-embudo.arrastrada { opacity: .45; }
+.tarjeta-embudo-enlace { display: grid; gap: 3px; padding: 10px 12px 6px; color: inherit; text-decoration: none; }
+.tarjeta-embudo-enlace strong { font-size: .9rem; }
+.motivo-embudo { color: #991B1B; }
+.tarjeta-embudo-pie { display: flex; align-items: center; gap: 8px; padding: 0 4px 4px 12px; }
+.tarjeta-embudo-pie > :first-child { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.boton-mover { width: 36px; height: 36px; }
+@media (min-width: 1024px) {
+    .chips-etapas { display: none; }
+    .tablero { grid-auto-columns: minmax(190px, 1fr); gap: 10px; scroll-snap-type: none; }
+}
