@@ -68,7 +68,13 @@ export default function Historial({ interesadoId, etapas, usuario }) {
             </div>
 
             {error && !nueva && <p className="alerta alerta-error" role="alert">{error}</p>}
-            {interacciones.length === 0 && <p className="texto-suave texto-pequeno historial-vacio">Todavía no hay contactos registrados.</p>}
+            {interacciones.length === 0 && (
+                <p className="texto-suave texto-pequeno historial-vacio">
+                    {etapas.length
+                        ? 'Aún no hay llamadas, mensajes ni reuniones. Por ahora solo hay cambios de etapa.'
+                        : 'Todavía no hay contactos registrados.'}
+                </p>
+            )}
 
             <ol className="linea-tiempo">
                 {linea.map((item) => {
