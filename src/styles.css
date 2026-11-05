@@ -248,7 +248,8 @@ a.boton-icono { text-decoration: none; }
     display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 60px; justify-content: center;
     border-radius: 10px; background: var(--azul-suave); color: var(--azul); font-size: .78rem; font-weight: 600; text-decoration: none;
 }
-.acciones-rapidas a:hover { background: #d6ebfb; }
+.acciones-rapidas a:hover, .acciones-rapidas button:hover { background: #d6ebfb; }
+.acciones-rapidas button { border: 0; font: inherit; cursor: pointer; }
 .acciones-rapidas .inactiva { background: #F1F5F9; color: var(--texto-tenue); }
 .pagina .tarjeta h2 { margin-bottom: 12px; }
 .titulo-tarjeta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
@@ -485,3 +486,19 @@ a.boton-icono { text-decoration: none; }
     .chips-etapas { display: none; }
     .tablero { grid-auto-columns: minmax(190px, 1fr); gap: 10px; scroll-snap-type: none; }
 }
+
+/* ---- Demostraciones (RF16) ---- */
+.lista-demos { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.lista-demos li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border: 1px solid var(--borde); border-radius: 10px; }
+.lista-demos li > div:first-child { display: grid; gap: 2px; min-width: 0; }
+.acciones-demo { display: flex; gap: 6px; }
+.estado-demo { border-radius: 999px; padding: 2px 9px; font-size: .75rem; font-weight: 600; }
+.estado-demo-realizada { background: #ECFDF5; color: #065F46; }
+.estado-demo-cancelada { background: #F1F5F9; color: #475569; }
+.opciones-modalidad { display: flex; gap: 8px; margin: 0 0 12px; padding: 0; border: 0; }
+.opciones-modalidad legend { font-size: .85rem; font-weight: 600; color: var(--texto-suave); margin-bottom: 4px; padding: 0; }
+.opciones-modalidad label { flex: 1; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--borde); border-radius: 10px; cursor: pointer; }
+.opciones-modalidad label.elegida { border-color: var(--azul); background: #F0F7FD; }
+.opciones-modalidad input { accent-color: var(--azul); width: 18px; height: 18px; margin: 0; }
+.hoja .alerta ul { margin: 6px 0; padding-left: 18px; }
+.hoja .alerta p { margin: 0; }

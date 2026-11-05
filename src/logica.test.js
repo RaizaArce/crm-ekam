@@ -8,6 +8,7 @@ import { limpiarBusqueda } from './paginas/Interesados.jsx';
 import { ultimosDigitos } from './paginas/NuevoInteresado.jsx';
 import { enlaceCorreo, mensajesInteresado } from './mensajes.js';
 import { agruparPorEtapa } from './paginas/Embudo.jsx';
+import { cruces, datosDemo, pasaADemoAgendada } from './demos.js';
 
 vi.mock('./supabase.js', () => ({ supabase: {} }));
 
@@ -233,5 +234,35 @@ describe('UT14 agruparPorEtapa (HU17)', () => {
     });
     it('ignora una etapa desconocida sin romper el tablero', () => {
         expect(() => agruparPorEtapa([{ id: 9, etapa: 'otra' }])).not.toThrow();
+    });
+});
+
+describe('UT15 datosDemo y cruces (HU18)', () => {
+    const ahora = new Date('2026-11-05T12:00:00');
+    const form = { inicio: '2026-11-06T10:00', modalidad: 'virtual', consultora_id: 'u1', notas: '  Meet ' };
+    it('arma la fila con la fecha en ISO y las notas sin espacios', () => {
+        const { datos } = datosDemo(form, 'i1', ahora);
+        expect(datos).toMatchObject({ interesado_id: 'i1', consultora_id: 'u1', modalidad: 'virtual', notas: 'Meet' });
+        expect(new Date(datos.inicio).getTime()).toBe(new Date('2026-11-06T10:00').getTime());
+    });
+    it('rechaza fechas pasadas, sin consultora o con modalidad desconocida', () => {
+        expect(datosDemo({ ...form, inicio: '2026-11-04T10:00' }, 'i1', ahora).error).toMatch(/futura/);
+        expect(datosDemo({ ...form, consultora_id: '' }, 'i1', ahora).error).toMatch(/consultora/);
+        expect(datosDemo({ ...form, modalidad: 'otra' }, 'i1', ahora).error).toBeTruthy();
+        expect(datosDemo({ ...form, inicio: '' }, 'i1', ahora).error).toBeTruthy();
+    });
+    it('detecta cruces de la misma consultora a menos de una hora, solo si están programadas', () => {
+        const demos = [
+            { id: 1, consultora_id: 'u1', estado: 'programada', inicio: '2026-11-06T10:30' },
+            { id: 2, consultora_id: 'u2', estado: 'programada', inicio: '2026-11-06T10:00' },
+            { id: 3, consultora_id: 'u1', estado: 'cancelada', inicio: '2026-11-06T10:00' },
+            { id: 4, consultora_id: 'u1', estado: 'programada', inicio: '2026-11-06T11:00' },
+        ];
+        expect(cruces(demos, { consultora_id: 'u1', inicio: '2026-11-06T10:00' }).map((d) => d.id)).toEqual([1]);
+    });
+    it('pasa a Demostración agendada solo desde Nuevo o Contactado', () => {
+        expect(pasaADemoAgendada('nuevo')).toBe(true);
+        expect(pasaADemoAgendada('contactado')).toBe(true);
+        expect(pasaADemoAgendada('cotizado')).toBe(false);
     });
 });

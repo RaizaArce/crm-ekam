@@ -7,6 +7,7 @@ import {
     ETAPAS, MEDIOS, PLAZOS, VERSION_POLITICA, diasDesde, fecha, fechaHora, mensajeError, useCatalogos,
 } from '../catalogos.js';
 import Cabecera from '../componentes/Cabecera.jsx';
+import AgendarDemo from '../componentes/AgendarDemo.jsx';
 import CambiarEtapa from '../componentes/CambiarEtapa.jsx';
 import CamposInteresado, { aFechaLocal, datosParaGuardar } from '../componentes/CamposInteresado.jsx';
 import Etapa from '../componentes/Etapa.jsx';
@@ -14,6 +15,7 @@ import Historial from '../componentes/Historial.jsx';
 import Hoja from '../componentes/Hoja.jsx';
 import Iniciales from '../componentes/Iniciales.jsx';
 import { enlaceCorreo, mensajesInteresado } from '../mensajes.js';
+import { ESTADOS_DEMO, MODALIDADES } from '../demos.js';
 
 function aFormulario(i) {
     return {
@@ -55,16 +57,20 @@ export default function Ficha() {
     const [consentimientos, setConsentimientos] = useState([]);
     const [editando, setEditando] = useState(null);
     const [cambioEtapa, setCambioEtapa] = useState(false);
+    const [agendando, setAgendando] = useState(false);
+    const [demos, setDemos] = useState([]);
     const [errorHoja, setErrorHoja] = useState('');
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ tipo: location.state?.tipo ?? '', texto: location.state?.aviso ?? '' });
 
     const cargar = useCallback(async () => {
-        const [i, e, c] = await Promise.all([
+        const [i, e, c, d] = await Promise.all([
             supabase.from('interesados').select('*').eq('id', id).maybeSingle(),
             supabase.from('historial_etapas').select('*').eq('interesado_id', id).order('cambiado_en', { ascending: false }),
             supabase.from('consentimientos').select('*').eq('interesado_id', id).order('aceptado_en', { ascending: false }),
+            supabase.from('demostraciones').select('*').eq('interesado_id', id).order('inicio', { ascending: false }),
         ]);
+        setDemos(d.data ?? []);
         setInteresado(i.data ?? null);
         setEtapas(e.data ?? []);
         setConsentimientos(c.data ?? []);
@@ -92,6 +98,15 @@ export default function Ficha() {
         if (error) return setErrorHoja(mensajeError(error));
         setEditando(null);
         setMensaje({ tipo: 'ok', texto: 'Cambios guardados.' });
+        cargar();
+    }
+
+    // RF16: la consultora marca si la demostración se hizo o se canceló.
+    async function cambiarEstadoDemo(demo, estado) {
+        if (estado === 'cancelada' && !window.confirm('¿Cancelar esta demostración?')) return;
+        const { error } = await supabase.from('demostraciones').update({ estado }).eq('id', demo.id);
+        if (error) return setMensaje({ tipo: 'error', texto: mensajeError(error) });
+        setMensaje({ tipo: 'ok', texto: estado === 'realizada' ? 'Demostración marcada como realizada.' : 'Demostración cancelada.' });
         cargar();
     }
 
@@ -178,7 +193,7 @@ export default function Ficha() {
                                 {i.correo
                                     ? <a href={enlaceCorreo(i.correo, mensajes)}><Mail size={20} aria-hidden="true" />Correo</a>
                                     : <span className="inactiva"><Mail size={20} aria-hidden="true" />Correo</span>}
-                                <span className="inactiva" title="Disponible en el Sprint 03"><Calendar size={20} aria-hidden="true" />Agendar</span>
+                                <button type="button" onClick={() => setAgendando(true)}><Calendar size={20} aria-hidden="true" />Agendar</button>
                             </div>
                         </div>
 
@@ -209,6 +224,36 @@ export default function Ficha() {
                         </div>
 
                         <div className="tarjeta">
+                            <h2>Demostraciones</h2>
+                            {demos.length === 0 ? (
+                                <p className="texto-suave texto-pequeno">Aún no tiene demostraciones agendadas.</p>
+                            ) : (
+                                <ul className="lista-demos">
+                                    {demos.map((d) => (
+                                        <li key={d.id}>
+                                            <div>
+                                                <strong>{fechaHora(d.inicio)}</strong>
+                                                <span className="texto-suave texto-pequeno">
+                                                    {MODALIDADES[d.modalidad]} · {usuario(d.consultora_id)}
+                                                </span>
+                                                {d.notas && <span className="texto-pequeno texto-largo">{d.notas}</span>}
+                                            </div>
+                                            {d.estado === 'programada' ? (
+                                                <div className="acciones-demo">
+                                                    <button type="button" className="boton boton-chico" onClick={() => cambiarEstadoDemo(d, 'realizada')}>Realizada</button>
+                                                    <button type="button" className="boton boton-chico boton-peligro" onClick={() => cambiarEstadoDemo(d, 'cancelada')}>Cancelar</button>
+                                                </div>
+                                            ) : (
+                                                <span className={`estado-demo estado-demo-${d.estado}`}>{ESTADOS_DEMO[d.estado]}</span>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            <button type="button" className="boton-suave" onClick={() => setAgendando(true)}>Agendar demostración</button>
+                        </div>
+
+                        <div className="tarjeta">
                             <h2>Consentimiento de datos</h2>
                             {consentimientos.length ? (
                                 consentimientos.map((c) => (
@@ -230,6 +275,22 @@ export default function Ficha() {
                     </div>
                 </div>
             </div>
+
+            {agendando && (
+                <AgendarDemo
+                    interesado={i}
+                    usuarios={catalogos.usuarios}
+                    alCerrar={() => setAgendando(false)}
+                    alGuardar={(datos) => {
+                        setAgendando(false);
+                        setMensaje({
+                            tipo: 'ok',
+                            texto: `Demostración agendada: ${fechaHora(datos.inicio)}${datos.etapaNueva ? ` · Etapa: ${ETAPAS[datos.etapaNueva]}` : ''}`,
+                        });
+                        cargar();
+                    }}
+                />
+            )}
 
             {cambioEtapa && (
                 <CambiarEtapa
