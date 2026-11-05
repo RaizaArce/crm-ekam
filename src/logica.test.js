@@ -9,6 +9,7 @@ import { ultimosDigitos } from './paginas/NuevoInteresado.jsx';
 import { enlaceCorreo, mensajesInteresado } from './mensajes.js';
 import { agruparPorEtapa } from './paginas/Embudo.jsx';
 import { claveDia, cruces, datosDemo, diasDeLaSemana, inicioSemana, pasaADemoAgendada, tituloSemana } from './demos.js';
+import { aCsv, cierrePorConsultora, contarPor, conversion, conversionPorEtapa, demosRealizadasDelMes, interesadosDelMes, interesadosPorMes, perdidos, tiempoPromedioCierre } from './metricas.js';
 
 vi.mock('./supabase.js', () => ({ supabase: {} }));
 
@@ -297,5 +298,67 @@ describe('UT17 fecha de la demostración en el mensaje (HU09, HU18)', () => {
     });
     it('sin demostración programada usa el texto general', () => {
         expect(mensajesInteresado(base).correo).toContain('que tenemos programada');
+    });
+});
+
+describe('UT18 métricas del dashboard (HU19, HU22, HU23)', () => {
+    const hoy = new Date('2026-11-15T12:00');
+    const I = [
+        { id: 'a', creado_en: '2026-11-02T10:00', etapa: 'cerrado', etapa_desde: '2026-11-12T10:00', sector: 'agro', solucion: 'erp', medio_contacto: 'whatsapp', consultora_id: 'u1' },
+        { id: 'b', creado_en: '2026-11-05T10:00', etapa: 'perdido', motivo_perdida: 'Precio.', sector: 'agro', medio_contacto: 'web_formulario', consultora_id: 'u2' },
+        { id: 'c', creado_en: '2026-10-20T10:00', etapa: 'cotizado', sector: 'comercio', medio_contacto: 'whatsapp', consultora_id: 'u2' },
+        { id: 'd', creado_en: '2026-10-01T10:00', etapa: 'cerrado', etapa_desde: '2026-10-31T10:00', medio_contacto: 'llamada', consultora_id: 'u1' },
+        { id: 'e', creado_en: '2026-09-15T10:00', etapa: 'perdido', motivo_perdida: 'precio', medio_contacto: 'llamada', consultora_id: null },
+    ];
+    const H = [
+        { interesado_id: 'a', etapa_anterior: 'cotizado', etapa_nueva: 'cerrado', cambiado_en: '2026-11-12T10:00' },
+        { interesado_id: 'b', etapa_anterior: 'nuevo', etapa_nueva: 'demo_agendada', cambiado_en: '2026-11-06T10:00' },
+        { interesado_id: 'b', etapa_anterior: 'demo_agendada', etapa_nueva: 'perdido', cambiado_en: '2026-11-08T10:00' },
+        { interesado_id: 'd', etapa_anterior: 'cotizado', etapa_nueva: 'cerrado', cambiado_en: '2026-10-21T10:00' },
+    ];
+    it('cuenta por mes incluyendo los meses en cero', () => {
+        expect(interesadosPorMes(I, 3, hoy).map((m) => m.total)).toEqual([1, 2, 2]);
+        expect(interesadosPorMes([], 6, hoy)).toHaveLength(6);
+    });
+    it('interesados del mes y diferencia con el anterior', () => {
+        expect(interesadosDelMes(I, hoy)).toEqual({ actual: 2, diferencia: 0 });
+    });
+    it('conversión y tiempo de cierre usan la fecha del historial', () => {
+        expect(conversion(I)).toEqual({ cerrados: 2, total: 5, tasa: 0.4 });
+        // a: 2/11 -> 12/11 = 10 días; d: 1/10 -> 21/10 = 20 días
+        expect(tiempoPromedioCierre(I, H)).toEqual({ dias: 15, cierres: 2 });
+    });
+    it('conversión por etapa cuenta la etapa más avanzada, aunque luego se pierda', () => {
+        const c = conversionPorEtapa(I, H).map((x) => x.llegaron);
+        // nuevo 5, contactado 4 (a,b,c,d), demo 4 (a,b,c,d), cotizado 3 (a,c,d), cerrado 2
+        expect(c).toEqual([5, 4, 4, 3, 2]);
+    });
+    it('una venta deshecha no cuenta como cerrada en el embudo', () => {
+        const deshecha = [{ id: 'z', etapa: 'contactado' }];
+        const h = [
+            { interesado_id: 'z', etapa_anterior: 'cotizado', etapa_nueva: 'cerrado' },
+            { interesado_id: 'z', etapa_anterior: 'cerrado', etapa_nueva: 'contactado' },
+        ];
+        expect(conversionPorEtapa(deshecha, h).map((x) => x.llegaron)).toEqual([1, 1, 1, 1, 0]);
+    });
+    it('perdidos agrupa el motivo sin importar mayúsculas ni el punto final', () => {
+        expect(perdidos(I)).toEqual({ total: 2, motivo: { texto: 'Precio', veces: 2 } });
+    });
+    it('cuenta por campo con nombres y deja "Sin dato" al final', () => {
+        expect(contarPor(I, 'sector', { agro: 'Agroindustria' })).toEqual([
+            { clave: 'agro', nombre: 'Agroindustria', total: 2 }, { clave: 'comercio', nombre: 'comercio', total: 1 },
+            { clave: '', nombre: 'Sin dato', total: 2 },
+        ]);
+    });
+    it('cierre por consultora y demos realizadas del mes', () => {
+        expect(cierrePorConsultora(I, H)).toEqual([{ consultora_id: 'u1', cerrados: 2, dias: 15 }]);
+        expect(demosRealizadasDelMes([
+            { estado: 'realizada', inicio: '2026-11-03T10:00' }, { estado: 'cancelada', inicio: '2026-11-03T10:00' },
+            { estado: 'realizada', inicio: '2026-10-03T10:00' },
+        ], hoy)).toBe(1);
+    });
+    it('el CSV usa ";", BOM y comillas cuando hace falta', () => {
+        const csv = aCsv([{ n: 'Pérez; Ana', e: 'Dijo "sí"' }], [{ titulo: 'Nombre', valor: (f) => f.n }, { titulo: 'Nota', valor: (f) => f.e }]);
+        expect(csv).toBe('﻿Nombre;Nota\r\n"Pérez; Ana";"Dijo ""sí"""');
     });
 });

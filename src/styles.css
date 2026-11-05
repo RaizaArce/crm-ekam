@@ -542,3 +542,30 @@ a.boton-icono { text-decoration: none; }
 .lista-elegir button:hover { border-color: var(--azul); background: #F0F7FD; }
 .lista-elegir button > span:nth-child(2) { flex: 1; display: grid; min-width: 0; }
 .cuerpo:has(+ .boton-flotante) { padding-bottom: 96px; }
+
+/* ---- Dashboard comercial (prototipo 07) ---- */
+.barra-dashboard { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.barra-dashboard .boton-ancho { margin: 4px 0 0; }
+.indicadores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.pagina .indicadores .tarjeta { margin-bottom: 0; }
+.indicador { display: grid; gap: 4px; align-content: start; }
+.indicador strong { font-family: 'Montserrat Variable', sans-serif; font-size: 1.6rem; line-height: 1.1; color: var(--texto); }
+.indicador > span:last-child { display: inline-flex; align-items: center; gap: 3px; }
+.tendencia-sube { color: #047857; }
+.tendencia-baja { color: #B91C1C; }
+.grafico-meses { position: relative; height: 200px; }
+.ranking { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.ranking li { display: grid; grid-template-columns: minmax(90px, 38%) 1fr auto; align-items: center; gap: 10px; font-size: .85rem; }
+.ranking-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-barra { height: 8px; border-radius: 999px; background: #EEF2F6; overflow: hidden; }
+.ranking-barra i { display: block; height: 100%; border-radius: 999px; background: var(--azul); }
+.ranking-valor { min-width: 44px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ranking-pie { margin: 12px 0 0; }
+.cierre-consultoras { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+.cierre-consultoras li { display: flex; align-items: center; gap: 10px; }
+.cierre-consultoras li > span:nth-child(2) { flex: 1; display: grid; min-width: 0; }
+.cierre-dias { display: grid; justify-items: end; }
+@media (min-width: 1024px) {
+    .indicadores { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .dashboard-columnas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; align-items: start; }
+}

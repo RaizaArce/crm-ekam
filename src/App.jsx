@@ -1,7 +1,7 @@
+import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
 import Layout from './componentes/Layout.jsx';
-import EnConstruccion from './componentes/EnConstruccion.jsx';
 import Login from './paginas/Login.jsx';
 import Cuenta from './paginas/Cuenta.jsx';
 import Agenda from './paginas/Agenda.jsx';
@@ -11,6 +11,9 @@ import Interesados from './paginas/Interesados.jsx';
 import Mas from './paginas/Mas.jsx';
 import NuevoInteresado from './paginas/NuevoInteresado.jsx';
 import Usuarios from './paginas/Usuarios.jsx';
+
+// El dashboard trae Chart.js: se descarga solo cuando se abre.
+const Dashboard = lazy(() => import('./paginas/Dashboard.jsx'));
 
 // Si alguien escribe /usuarios sin ser administrador, vuelve a la lista de interesados.
 function SoloAdmin({ children }) {
@@ -33,7 +36,7 @@ export default function App() {
                 <Route path="interesados/:id" element={<Ficha />} />
                 <Route path="embudo" element={<Embudo />} />
                 <Route path="agenda" element={<Agenda />} />
-                <Route path="dashboard" element={<EnConstruccion titulo="Dashboard comercial" sprint="04" />} />
+                <Route path="dashboard" element={<Suspense fallback={<p className="cuerpo texto-suave">Cargando…</p>}><Dashboard /></Suspense>} />
                 <Route path="usuarios" element={<SoloAdmin><Usuarios /></SoloAdmin>} />
                 <Route path="cuenta" element={<Cuenta />} />
                 <Route path="mas" element={<Mas />} />
