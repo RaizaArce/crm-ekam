@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, MapPin, Video } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, Plus, Video } from 'lucide-react';
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
-import { useCatalogos } from '../catalogos.js';
+import { fechaHora, useCatalogos } from '../catalogos.js';
 import { ESTADOS_DEMO, MODALIDADES, claveDia, diasDeLaSemana, inicioSemana, sumarDias, tituloSemana } from '../demos.js';
+import AgendarDemo from '../componentes/AgendarDemo.jsx';
 import Cabecera from '../componentes/Cabecera.jsx';
+import ElegirInteresado from '../componentes/ElegirInteresado.jsx';
 import Iniciales from '../componentes/Iniciales.jsx';
 
 const LETRAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -29,6 +31,10 @@ export default function Agenda() {
     const [consultora, setConsultora] = useState('');
     const [demos, setDemos] = useState(null);
     const [error, setError] = useState('');
+    const [eligiendo, setEligiendo] = useState(false);
+    const [agendar, setAgendar] = useState(null); // interesado elegido
+    const [aviso, setAviso] = useState('');
+    const [recarga, setRecarga] = useState(0);
     const secciones = useRef({});
 
     useEffect(() => {
@@ -48,7 +54,7 @@ export default function Agenda() {
             setDemos(data);
         });
         return () => { cancelado = true; };
-    }, [lunes, consultora]);
+    }, [lunes, consultora, recarga]);
 
     const usuario = (id) => catalogos.usuarios.find((u) => u.id === id)?.nombre ?? '';
     const hoy = claveDia(new Date());
@@ -63,6 +69,9 @@ export default function Agenda() {
     return (
         <section className="pagina">
             <Cabecera titulo="Agenda de demos" subtitulo={tituloSemana(lunes)}>
+                <button type="button" className="boton boton-principal solo-escritorio" onClick={() => setEligiendo(true)}>
+                    <Plus size={18} aria-hidden="true" />Agendar demo
+                </button>
                 {!esEstaSemana && (
                     <button type="button" className="boton boton-chico" onClick={() => setLunes(inicioSemana(new Date()))}>Hoy</button>
                 )}
@@ -106,12 +115,12 @@ export default function Agenda() {
 
             <div className="cuerpo">
                 {error && <p className="alerta alerta-error" role="alert">{error}</p>}
+                {aviso && <p className="alerta alerta-ok" role="status">{aviso}</p>}
                 {demos === null && !error && <p className="texto-suave">Cargando…</p>}
                 {demos && demos.length === 0 && (
                     <div className="tarjeta aviso-pantalla">
                         <p className="texto-suave">No hay demostraciones esta semana.</p>
-                        <p className="texto-suave texto-pequeno">Para agendar una, abre la ficha del interesado y pulsa «Agendar».</p>
-                        <Link className="boton" to="/interesados">Ir a Interesados</Link>
+                        <button type="button" className="boton boton-principal" onClick={() => setEligiendo(true)}>Agendar demo</button>
                     </div>
                 )}
                 {demos && demos.length > 0 && (
@@ -151,6 +160,31 @@ export default function Agenda() {
                     </>
                 )}
             </div>
+
+            <button type="button" className="boton-flotante solo-celular" onClick={() => setEligiendo(true)}>
+                <Plus size={20} aria-hidden="true" />Agendar demo
+            </button>
+
+            {eligiendo && (
+                <ElegirInteresado
+                    titulo="¿Con quién es la demo?"
+                    alCerrar={() => setEligiendo(false)}
+                    alElegir={(i) => { setEligiendo(false); setAgendar(i); }}
+                />
+            )}
+            {agendar && (
+                <AgendarDemo
+                    interesado={agendar}
+                    usuarios={catalogos.usuarios}
+                    alCerrar={() => setAgendar(null)}
+                    alGuardar={(datos) => {
+                        setAviso(`Demostración con ${agendar.nombre} agendada: ${fechaHora(datos.inicio)}`);
+                        setAgendar(null);
+                        setLunes(inicioSemana(new Date(datos.inicio)));
+                        setRecarga((n) => n + 1);
+                    }}
+                />
+            )}
         </section>
     );
 }
