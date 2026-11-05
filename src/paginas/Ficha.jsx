@@ -4,9 +4,10 @@ import { ArrowLeft, Calendar, EllipsisVertical, Mail, MessageCircle, Pencil, Pho
 import { supabase } from '../supabase.js';
 import { useAuth } from '../auth.jsx';
 import {
-    ETAPAS, MEDIOS, PLAZOS, VERSION_POLITICA, datosCambioEtapa, diasDesde, fecha, fechaHora, mensajeError, useCatalogos,
+    ETAPAS, MEDIOS, PLAZOS, VERSION_POLITICA, diasDesde, fecha, fechaHora, mensajeError, useCatalogos,
 } from '../catalogos.js';
 import Cabecera from '../componentes/Cabecera.jsx';
+import CambiarEtapa from '../componentes/CambiarEtapa.jsx';
 import CamposInteresado, { aFechaLocal, datosParaGuardar } from '../componentes/CamposInteresado.jsx';
 import Etapa from '../componentes/Etapa.jsx';
 import Historial from '../componentes/Historial.jsx';
@@ -53,7 +54,7 @@ export default function Ficha() {
     const [etapas, setEtapas] = useState([]);
     const [consentimientos, setConsentimientos] = useState([]);
     const [editando, setEditando] = useState(null);
-    const [cambioEtapa, setCambioEtapa] = useState(null); // { etapa, motivo }
+    const [cambioEtapa, setCambioEtapa] = useState(false);
     const [errorHoja, setErrorHoja] = useState('');
     const [guardando, setGuardando] = useState(false);
     const [mensaje, setMensaje] = useState({ tipo: location.state?.tipo ?? '', texto: location.state?.aviso ?? '' });
@@ -91,27 +92,6 @@ export default function Ficha() {
         if (error) return setErrorHoja(mensajeError(error));
         setEditando(null);
         setMensaje({ tipo: 'ok', texto: 'Cambios guardados.' });
-        cargar();
-    }
-
-    function abrirCambioEtapa() {
-        setErrorHoja('');
-        setCambioEtapa({ etapa: interesado.etapa, motivo: interesado.motivo_perdida ?? '' });
-    }
-
-    // RF14: el historial de etapas lo registra la base de datos (trigger registrar_cambio_etapa).
-    async function guardarEtapa(e) {
-        e.preventDefault();
-        if (cambioEtapa.etapa === interesado.etapa && cambioEtapa.etapa !== 'perdido') return setCambioEtapa(null);
-        const { datos, error: invalido } = datosCambioEtapa(cambioEtapa.etapa, cambioEtapa.motivo);
-        if (invalido) return setErrorHoja(invalido);
-        setGuardando(true);
-        setErrorHoja('');
-        const { error } = await supabase.from('interesados').update(datos).eq('id', id);
-        setGuardando(false);
-        if (error) return setErrorHoja(mensajeError(error));
-        setCambioEtapa(null);
-        setMensaje({ tipo: 'ok', texto: `Etapa cambiada a ${ETAPAS[datos.etapa]}.` });
         cargar();
     }
 
@@ -186,7 +166,7 @@ export default function Ficha() {
                             <p className="ficha-etapa">
                                 <Etapa etapa={i.etapa} />
                                 <span className="texto-suave texto-pequeno">{textoDias(i.etapa_desde)}</span>
-                                <button type="button" className="boton-suave" onClick={abrirCambioEtapa}>Cambiar etapa</button>
+                                <button type="button" className="boton-suave" onClick={() => setCambioEtapa(true)}>Cambiar etapa</button>
                             </p>
                             <div className="acciones-rapidas">
                                 {i.telefono
@@ -252,37 +232,15 @@ export default function Ficha() {
             </div>
 
             {cambioEtapa && (
-                <Hoja titulo="Cambiar etapa" alCerrar={() => setCambioEtapa(null)}>
-                    <form onSubmit={guardarEtapa}>
-                        {errorHoja && <p className="alerta alerta-error" role="alert">{errorHoja}</p>}
-                        <fieldset className="opciones-etapa">
-                            <legend className="texto-suave texto-pequeno">Etapa actual: {ETAPAS[i.etapa]}</legend>
-                            {Object.entries(ETAPAS).map(([codigo, texto]) => (
-                                <label key={codigo} className={cambioEtapa.etapa === codigo ? 'elegida' : ''}>
-                                    <input
-                                        type="radio" name="etapa" value={codigo}
-                                        checked={cambioEtapa.etapa === codigo}
-                                        onChange={() => setCambioEtapa({ ...cambioEtapa, etapa: codigo })}
-                                    />
-                                    <span className={`etapa etapa-${codigo}`}>{texto}</span>
-                                </label>
-                            ))}
-                        </fieldset>
-                        {cambioEtapa.etapa === 'perdido' && (
-                            <label className="campo">
-                                <span>Motivo de pérdida *</span>
-                                <textarea
-                                    value={cambioEtapa.motivo} maxLength={500} required
-                                    placeholder="Ej.: eligió otro proveedor por precio"
-                                    onChange={(ev) => setCambioEtapa({ ...cambioEtapa, motivo: ev.target.value })}
-                                />
-                            </label>
-                        )}
-                        <button className="boton boton-principal boton-ancho" disabled={guardando}>
-                            {guardando ? 'Guardando…' : 'Guardar etapa'}
-                        </button>
-                    </form>
-                </Hoja>
+                <CambiarEtapa
+                    interesado={i}
+                    alCerrar={() => setCambioEtapa(false)}
+                    alGuardar={(datos) => {
+                        setCambioEtapa(false);
+                        setMensaje({ tipo: 'ok', texto: `Etapa cambiada a ${ETAPAS[datos.etapa]}.` });
+                        cargar();
+                    }}
+                />
             )}
 
             {editando && (
