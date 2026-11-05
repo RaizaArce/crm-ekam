@@ -8,7 +8,7 @@ import { limpiarBusqueda } from './paginas/Interesados.jsx';
 import { ultimosDigitos } from './paginas/NuevoInteresado.jsx';
 import { enlaceCorreo, mensajesInteresado } from './mensajes.js';
 import { agruparPorEtapa } from './paginas/Embudo.jsx';
-import { cruces, datosDemo, pasaADemoAgendada } from './demos.js';
+import { claveDia, cruces, datosDemo, diasDeLaSemana, inicioSemana, pasaADemoAgendada, tituloSemana } from './demos.js';
 
 vi.mock('./supabase.js', () => ({ supabase: {} }));
 
@@ -264,5 +264,26 @@ describe('UT15 datosDemo y cruces (HU18)', () => {
         expect(pasaADemoAgendada('nuevo')).toBe(true);
         expect(pasaADemoAgendada('contactado')).toBe(true);
         expect(pasaADemoAgendada('cotizado')).toBe(false);
+    });
+});
+
+describe('UT16 semana de la agenda (HU18)', () => {
+    it('la semana empieza el lunes, también si la fecha es domingo', () => {
+        expect(claveDia(inicioSemana(new Date('2026-11-05T15:00')))).toBe('2026-11-02');
+        expect(claveDia(inicioSemana(new Date('2026-11-08T23:00')))).toBe('2026-11-02');
+        expect(claveDia(inicioSemana(new Date('2026-11-09T00:30')))).toBe('2026-11-09');
+    });
+    it('agrupa las demostraciones por día y las ordena por hora', () => {
+        const dias = diasDeLaSemana(new Date('2026-11-02T00:00'), [
+            { id: 'b', inicio: '2026-11-05T16:00' }, { id: 'a', inicio: '2026-11-05T09:00' }, { id: 'c', inicio: '2026-11-08T10:00' },
+        ]);
+        expect(dias).toHaveLength(7);
+        expect(dias[3].demos.map((d) => d.id)).toEqual(['a', 'b']);
+        expect(dias[6].demos.map((d) => d.id)).toEqual(['c']);
+        expect(dias[0].demos).toEqual([]);
+    });
+    it('escribe el título de la semana con uno o dos meses', () => {
+        expect(tituloSemana(new Date('2026-11-02T00:00'))).toBe('Semana del 2 al 8 de noviembre');
+        expect(tituloSemana(new Date('2026-10-26T00:00'))).toBe('Semana del 26 de octubre al 1 de noviembre');
     });
 });

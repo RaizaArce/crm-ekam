@@ -35,3 +35,45 @@ export function cruces(demos, { consultora_id, inicio }) {
 
 // Al agendar, el interesado pasa a "Demostración agendada" si aún estaba en Nuevo o Contactado.
 export const pasaADemoAgendada = (etapa) => etapa === 'nuevo' || etapa === 'contactado';
+
+// Lunes 00:00 de la semana de una fecha (la agenda va de lunes a domingo).
+export function inicioSemana(fecha) {
+    const d = new Date(fecha);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return d;
+}
+
+export function sumarDias(fecha, dias) {
+    const d = new Date(fecha);
+    d.setDate(d.getDate() + dias);
+    return d;
+}
+
+// Clave AAAA-MM-DD en hora local, para agrupar por día.
+export function claveDia(fecha) {
+    const d = new Date(fecha);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Los 7 días de la semana con sus demostraciones ordenadas por hora.
+export function diasDeLaSemana(lunes, demos) {
+    return Array.from({ length: 7 }, (_, i) => {
+        const fecha = sumarDias(lunes, i);
+        const clave = claveDia(fecha);
+        return {
+            fecha,
+            clave,
+            demos: demos.filter((d) => claveDia(d.inicio) === clave).sort((a, b) => new Date(a.inicio) - new Date(b.inicio)),
+        };
+    });
+}
+
+// "Semana del 12 al 18 de octubre" o "Semana del 28 de octubre al 3 de noviembre".
+export function tituloSemana(lunes) {
+    const domingo = sumarDias(lunes, 6);
+    const mes = (d) => d.toLocaleDateString('es-PE', { month: 'long' }).toLowerCase();
+    return lunes.getMonth() === domingo.getMonth()
+        ? `Semana del ${lunes.getDate()} al ${domingo.getDate()} de ${mes(domingo)}`
+        : `Semana del ${lunes.getDate()} de ${mes(lunes)} al ${domingo.getDate()} de ${mes(domingo)}`;
+}

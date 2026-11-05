@@ -495,6 +495,7 @@ a.boton-icono { text-decoration: none; }
 .estado-demo { border-radius: 999px; padding: 2px 9px; font-size: .75rem; font-weight: 600; }
 .estado-demo-realizada { background: #ECFDF5; color: #065F46; }
 .estado-demo-cancelada { background: #F1F5F9; color: #475569; }
+.estado-demo-programada { background: #F3E8FF; color: #6B21A8; }
 .opciones-modalidad { display: flex; gap: 8px; margin: 0 0 12px; padding: 0; border: 0; }
 .opciones-modalidad legend { font-size: .85rem; font-weight: 600; color: var(--texto-suave); margin-bottom: 4px; padding: 0; }
 .opciones-modalidad label { flex: 1; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--borde); border-radius: 10px; cursor: pointer; }
@@ -502,3 +503,31 @@ a.boton-icono { text-decoration: none; }
 .opciones-modalidad input { accent-color: var(--azul); width: 18px; height: 18px; margin: 0; }
 .hoja .alerta ul { margin: 6px 0; padding-left: 18px; }
 .hoja .alerta p { margin: 0; }
+
+/* ---- Agenda semanal (prototipo 06) ---- */
+.semana { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 10px 16px 0; max-width: 640px; }
+.dia { display: grid; justify-items: center; gap: 2px; padding: 6px 0; border: 0; border-radius: 12px; background: transparent; font: inherit; color: var(--texto); cursor: pointer; }
+.dia:hover { background: var(--azul-suave); }
+.dia-letra { font-size: .7rem; color: var(--texto-suave); font-weight: 600; }
+.dia-numero { font-size: 1rem; font-weight: 700; }
+.dia-puntos { display: flex; gap: 3px; height: 6px; }
+.dia-puntos i { width: 5px; height: 5px; border-radius: 50%; background: var(--azul); }
+.dia-hoy { background: var(--azul); color: #fff; }
+.dia-hoy:hover { background: var(--azul); }
+.dia-hoy .dia-letra { color: rgba(255, 255, 255, .8); }
+.dia-hoy .dia-puntos i { background: #fff; }
+.dia-agenda { scroll-margin-top: 80px; margin-bottom: 18px; }
+.dia-agenda h2 { display: flex; align-items: center; gap: 8px; font-size: .95rem; margin: 0 0 8px; text-transform: none; }
+.contador-demos { border-radius: 999px; padding: 1px 8px; background: var(--azul); color: #fff; font-size: .7rem; font-weight: 600; }
+.demos-dia { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.demo-agenda { display: flex; gap: 12px; padding: 12px; background: #fff; border-radius: 12px; box-shadow: 0 1px 2px rgba(15, 23, 42, .08), 0 0 0 1px rgba(15, 23, 42, .05); border-left: 3px solid var(--azul); }
+.demo-cancelada { border-left-color: var(--texto-tenue); opacity: .65; }
+.demo-realizada { border-left-color: #10B981; }
+.demo-hora { display: grid; align-content: start; min-width: 52px; }
+.demo-hora strong { font-size: 1.05rem; }
+.demo-hora span { font-size: .72rem; color: var(--texto-suave); }
+.demo-datos { display: grid; gap: 4px; min-width: 0; }
+.demo-datos a { color: inherit; text-decoration: none; }
+.demo-datos a:hover strong { text-decoration: underline; }
+.demo-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-modalidad { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 2px 9px; background: var(--azul-suave); color: #0B4F7C; font-size: .75rem; font-weight: 600; }

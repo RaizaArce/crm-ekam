@@ -4,6 +4,7 @@ import Layout from './componentes/Layout.jsx';
 import EnConstruccion from './componentes/EnConstruccion.jsx';
 import Login from './paginas/Login.jsx';
 import Cuenta from './paginas/Cuenta.jsx';
+import Agenda from './paginas/Agenda.jsx';
 import Embudo from './paginas/Embudo.jsx';
 import Ficha from './paginas/Ficha.jsx';
 import Interesados from './paginas/Interesados.jsx';
@@ -31,7 +32,7 @@ export default function App() {
                 <Route path="interesados/nuevo" element={<NuevoInteresado />} />
                 <Route path="interesados/:id" element={<Ficha />} />
                 <Route path="embudo" element={<Embudo />} />
-                <Route path="agenda" element={<EnConstruccion titulo="Agenda de demostraciones" sprint="03" />} />
+                <Route path="agenda" element={<Agenda />} />
                 <Route path="dashboard" element={<EnConstruccion titulo="Dashboard comercial" sprint="04" />} />
                 <Route path="usuarios" element={<SoloAdmin><Usuarios /></SoloAdmin>} />
                 <Route path="cuenta" element={<Cuenta />} />
