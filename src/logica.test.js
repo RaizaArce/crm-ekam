@@ -1,6 +1,6 @@
 // Pruebas unitarias de la lógica del CRM (Sprint 02). No usan la red ni la base de datos.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ETAPAS, MEDIOS, MEDIOS_MANUALES, diasDesde, fechaRelativa, mensajeError } from './catalogos.js';
+import { ETAPAS, MEDIOS, MEDIOS_MANUALES, datosCambioEtapa, diasDesde, fechaRelativa, mensajeError } from './catalogos.js';
 import { INTERESADO_VACIO, aFechaLocal, datosParaGuardar } from './componentes/CamposInteresado.jsx';
 import { iniciales } from './componentes/Iniciales.jsx';
 import { enlaceWhatsapp, textoDias } from './paginas/Ficha.jsx';
@@ -172,5 +172,20 @@ describe('UT11 Catálogos (HU08)', () => {
 
     it('todo interesado nuevo parte de una etapa conocida', () => {
         expect(ETAPAS).toHaveProperty('nuevo');
+    });
+});
+
+describe('UT12 datosCambioEtapa (HU16)', () => {
+    it('cambia a una etapa normal y borra el motivo de pérdida', () => {
+        expect(datosCambioEtapa('cotizado', 'precio')).toEqual({ datos: { etapa: 'cotizado', motivo_perdida: null } });
+    });
+    it('exige motivo para marcar como perdido', () => {
+        expect(datosCambioEtapa('perdido', '   ').error).toMatch(/motivo/);
+    });
+    it('guarda el motivo sin espacios sobrantes', () => {
+        expect(datosCambioEtapa('perdido', '  Eligió otro proveedor ')).toEqual({ datos: { etapa: 'perdido', motivo_perdida: 'Eligió otro proveedor' } });
+    });
+    it('rechaza una etapa que no existe', () => {
+        expect(datosCambioEtapa('ganado', '').error).toBeTruthy();
     });
 });

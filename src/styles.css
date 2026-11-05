@@ -237,6 +237,12 @@ a.boton-icono { text-decoration: none; }
 .ficha > div { min-width: 0; }
 .pagina .tarjeta .ficha-nombre { font-size: 1.15rem; margin: 0 0 2px; overflow-wrap: anywhere; }
 .ficha-etapa { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 12px 0; }
+.ficha-etapa .boton-suave { margin-left: auto; }
+.opciones-etapa { display: grid; gap: 6px; margin: 0 0 14px; padding: 0; border: 0; }
+.opciones-etapa legend { margin-bottom: 8px; padding: 0; }
+.opciones-etapa label { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 1px solid var(--borde); border-radius: 10px; cursor: pointer; }
+.opciones-etapa label.elegida { border-color: var(--azul); background: #F0F7FD; }
+.opciones-etapa input { accent-color: var(--azul); width: 18px; height: 18px; margin: 0; }
 .acciones-rapidas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .acciones-rapidas > * {
     display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 60px; justify-content: center;

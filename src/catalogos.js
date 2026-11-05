@@ -106,3 +106,14 @@ export function mensajeError(error) {
     if (m.includes('Failed to fetch')) return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
     return 'No se pudo guardar. Inténtalo de nuevo.';
 }
+
+// Cambio de etapa (RF14): "perdido" exige motivo; al salir de "perdido" se borra el motivo anterior.
+export function datosCambioEtapa(etapa, motivo) {
+    if (!ETAPAS[etapa]) return { error: 'Elige una etapa.' };
+    if (etapa === 'perdido') {
+        const texto = (motivo ?? '').trim();
+        if (!texto) return { error: 'Escribe el motivo por el que se perdió.' };
+        return { datos: { etapa, motivo_perdida: texto } };
+    }
+    return { datos: { etapa, motivo_perdida: null } };
+}
